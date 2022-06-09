@@ -6,16 +6,29 @@ import urllib.parse
 
 
 
-def searchforstring(response,string):
+def searchforstring(response,string,splitchar):
     s = []
-    for x in response.xpath('//div/text()').extract():
-        if(string.lower() in x.lower()):
-            s.append(x)
+    list_string = string.split(splitchar)
+    for j in list_string:
+        if(len(j)==0):
+            continue
+        for x in response.xpath('//div/text()').extract():
+            if(j.lower() in x.lower()):
+                s.append(x)
         for x in response.xpath('//a/text()').extract():
-            if(string.lower() in x.lower()):
+            if(j.lower() in x.lower()):
                 s.append(x)
         for x in response.xpath('//p/text()').extract():
-            if(string.lower() in x.lower()):
+            if(j.lower() in x.lower()):
+                s.append(x)
+        for x in response.xpath('//td/text()').extract():
+            if(j.lower() in x.lower()):
+                s.append(x)
+        for x in response.xpath('//li/text()').extract():
+            if(j.lower() in x.lower()):
+                s.append(x)
+        for x in response.xpath('//ul/text()').extract():
+            if(j.lower() in x.lower()):
                 s.append(x)
     return s
 
@@ -35,7 +48,7 @@ def extractLink(url,link):
     i = app.index('=')+2
     app = app[i:]
     #print("APP ADESSO "+app)
-    #time.sleep(2)
+    ##time.sleep(2)
     x = app.index("\"")
     uri = app[0:x]
     #print("URI:"+uri)
@@ -52,7 +65,8 @@ def extractLink(url,link):
         return uri
 
 class QuotesSpider(scrapy.Spider):
-    string = input("Inserisci la stringa da ricercare: ")
+    splitchar = input("Inserisci un separatore di stringhe: ")
+    string = input("Inserisci la stringa da ricercare (per separare più stringhe utilizzare il separatore '"+splitchar+"' ): ")
     name = "search"
     le1 = LinkExtractor()
     rules = (Rule(le1, callback='parse_item'))
@@ -68,11 +82,11 @@ class QuotesSpider(scrapy.Spider):
             else:
                 urls.append(x)
         urls= ['https://gtfobins.github.io/','https://quotes.toscrape.com/']
-        time.sleep(3)
+        #time.sleep(3)
         for url in urls:
             self.root = getHost(url)
             print("Metodo principale root: "+self.root)
-            time.sleep(5)
+            #time.sleep(5)
             sw = True
             yield scrapy.Request(url=url, callback=self.parse,cb_kwargs=dict(radix=self.root,switch=sw))
 
@@ -80,7 +94,7 @@ class QuotesSpider(scrapy.Spider):
         print(switch)
         print("Mi è arrivato: "+radix)
         print(response.url)
-        time.sleep(7)
+        #time.sleep(7)
         if(switch):
             switch = False
             u = []
@@ -96,13 +110,14 @@ class QuotesSpider(scrapy.Spider):
                 if (radix in getHost(proc)):
                     switch = True
                     print("root ("+radix+") è in proc ("+proc+") quindi setto sw su True ")
-                    time.sleep(1)
+                    ##time.sleep(1)
                 else:
                     switch = False
                     print("root ("+radix+") NON è in proc ("+proc+") quindi setto sw su False ")
-                    time.sleep(1)
+                    #time.sleep(1)
                 yield scrapy.Request(url=proc, callback=self.parse,cb_kwargs=dict(radix=radix,switch=switch))
-        matched = searchforstring(response,self.string)
+        
+        matched = searchforstring(response,self.string,self.splitchar)
         if len(matched)>0:
             yield {'url':response.url,'title': response.css('title::text').get(),'match':matched}
 
