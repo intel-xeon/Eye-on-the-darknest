@@ -17,7 +17,7 @@ def searchforstring(response,string):
         for x in response.xpath('//p/text()').extract():
             if(string.lower() in x.lower()):
                 s.append(x)
-        return s
+    return s
 
 def getHost(url):
     parsed_url = urllib.parse.urlparse(url)
