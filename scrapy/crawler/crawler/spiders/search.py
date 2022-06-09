@@ -119,7 +119,7 @@ class searchSpider(scrapy.Spider):
                 urls.append(x[0:len(x)-1])
             else:
                 urls.append(x)
-        urls = ["https://quotes.toscrape.com/page/1/","https://quotes.toscrape.com/page/2/"]
+     #  urls = ["https://quotes.toscrape.com/page/1/","https://quotes.toscrape.com/page/2/"]
         for url in urls:
             self.root = getHost(url)
             #print("Metodo principale root: "+self.root)
