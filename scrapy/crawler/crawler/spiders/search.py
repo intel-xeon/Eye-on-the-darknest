@@ -3,8 +3,6 @@ from scrapy.spiders import  Rule
 from scrapy.linkextractors import LinkExtractor
 import time
 import urllib.parse
-import getopt
-import sys
 
 def searchforstring(response,string,splitchar):
     s = []
