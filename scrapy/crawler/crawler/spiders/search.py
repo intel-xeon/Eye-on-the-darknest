@@ -3,8 +3,8 @@ from scrapy.spiders import  Rule
 from scrapy.linkextractors import LinkExtractor
 import time
 import urllib.parse
-
-
+import getopt
+import sys
 
 def searchforstring(response,string,splitchar):
     s = []
@@ -64,9 +64,19 @@ def extractLink(url,link):
         #print("Ritorno "+uri)
         return uri
 
-class QuotesSpider(scrapy.Spider):
-    splitchar = input("Inserisci un separatore di stringhe: ")
-    string = input("Inserisci la stringa da ricercare (per separare più stringhe utilizzare il separatore '"+splitchar+"' ): ")
+class searchSpider(scrapy.Spider):
+    
+    urls=[]
+    splitchar = ""
+    string = ""
+    def __init__(self, *args, **kwargs):
+        super(searchSpider, self).__init__(*args, **kwargs)
+
+            
+    
+    #splitchar = input("Inserisci un separatore di stringhe: ")
+    #string = input("Inserisci la stringa da ricercare (per separare più stringhe utilizzare il separatore '"+splitchar+"' ): ")
+    #time.sleep(10)
     name = "search"
     le1 = LinkExtractor()
     rules = (Rule(le1, callback='parse_item'))
@@ -75,14 +85,14 @@ class QuotesSpider(scrapy.Spider):
     
     def start_requests(self):
         urls=[]
-        r = open("url.txt",'r')
+        r = open(self.file,'r')
         for x in r:
             if (len(x)-1=='\n'):
                 urls.append(x[0:len(x)-1])
             else:
                 urls.append(x)
-        urls= ['https://gtfobins.github.io/','https://quotes.toscrape.com/']
-        #time.sleep(3)
+        print(self.string)
+        print(self.splitchar)
         for url in urls:
             self.root = getHost(url)
             print("Metodo principale root: "+self.root)
