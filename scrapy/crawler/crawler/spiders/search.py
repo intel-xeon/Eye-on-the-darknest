@@ -3,6 +3,8 @@ from scrapy.spiders import  Rule
 from scrapy.linkextractors import LinkExtractor
 import time
 import urllib.parse
+import getopt
+import sys
 
 def searchforstring(response,string,splitchar):
     s = []
@@ -85,12 +87,12 @@ class searchSpider(scrapy.Spider):
         urls=[]
         r = open(self.file,'r')
         for x in r:
+            if (not x.startswith("http")):
+                x = "http://"+x
             if (len(x)-1=='\n'):
                 urls.append(x[0:len(x)-1])
             else:
                 urls.append(x)
-        print(self.string)
-        print(self.splitchar)
         for url in urls:
             self.root = getHost(url)
             print("Metodo principale root: "+self.root)
