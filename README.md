@@ -18,7 +18,7 @@ Eye on the darknest which helps you find valuable information on the web. Based 
 </pre>
 
 <pre class="notranslate">
-<code>cd crawler/scrapy/crawler/crawler/</code>
+<code>cd Eye-on-the-darknest/scrapy/crawler/crawler/</code>
 </pre>
 
 <h3> usage example (clearnet): </h3>
