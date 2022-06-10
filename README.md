@@ -1,15 +1,20 @@
 # crawler
 
-#installation:
+#dependencies
 
 pip3 install Scrapy
 
-#usage example (clearnet):
+# preliminary steps 
 
 1. git clone https://github.com/intel-xeon/crawler.git
-2. cd  crawler/scrapy/crawler/crawler/
-3. scrapy  crawl search  -a file=path/of/my/url.txt -a string="String1/String2/String3/String4_part1\*String4_part2" -a splitchar=/ 
-4. result saved in "result.json"
+2. cd  crawler/scrapy/crawler/crawler/ 
+
+
+#usage example (clearnet):
+
+
+1. scrapy  crawl search  -a file=path/of/my/url.txt -a string="String1/String2/String3/String4_part1\*String4_part2" -a splitchar=/ 
+2. result saved in "result.json"
 
 
 If you want use this for search in the dark net:
