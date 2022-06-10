@@ -5,6 +5,7 @@ import time
 import urllib.parse
 import getopt
 import sys
+from scrapy.exporters import JsonItemExporter
 
 
 def testmultiple(q,stringa):
@@ -15,86 +16,31 @@ def testmultiple(q,stringa):
             stringa = stringa[app:]
         else:
             return False
+    print("Sto per dare true qui q:"+q+" stringa:"+stringa)
     return True
 
 
 
 def searchforstring(response,string,splitchar):
+    #element = ["div","a","p","td","li","ul","small"]
+    element = ['a','abbr','acronym','address','applet','area','article','aside','audio','b','base','basefont','bdi','bdo','bgsound','big','blink','blockquote','body','br','button','canvas','caption','center','circle','cite','clipPath','code','col','colgroup','command','content','data','datalist','dd','defs','del','details','dfn','dialog','dir','div','dl','dt','element','ellipse','em','embed','fieldset','figcaption','figure','font','footer','foreignObject','form','frame','frameset','g','h1','h2','h3','h4','h5','h6','head','header','hgroup','hr','html','i','iframe','image','img','input','ins','isindex','kbd','keygen','label','legend','li','line','linearGradient','link','listing','main','map','mark','marquee','mask','math','menu','menuitem','meta','meter','multicol','nav','nextid','nobr','noembed','noframes','noscript','object','ol','optgroup','option','output','p','param','path','pattern','picture','plaintext','polygon','polyline','pre','progress','q','radialGradient','rb','rbc','rect','rp','rt','rtc','ruby','s','samp','script','section','select','shadow','slot','small','source','spacer','span','stop','strike','strong','style','sub','summary','sup','svg','table','tbody','td','template','text','textarea','tfoot','th','thead','time','title','tr','track','tspan','tt','u','ul','var','video','wbr','xmp']
     s = []
     list_string = string.split(splitchar)
     for j in list_string:
         if(len(j)==0):
             continue
-        try:
-            for x in response.xpath('//div/text()').extract():
-                if("*" in j):
-                    if(testmultiple(j.lower(),x.lower())):
-                        s.append(x)
-                else:
-                    if(j.lower() in x.lower()):
-                        s.append(x)
-        except Exception:
-            print("Errore")
-        try:
-            for x in response.xpath('//a/text()').extract():
-                if("*" in j):
-                    if(testmultiple(j.lower(),x.lower())):
-                        s.append(x)
-                else:
-                    if(j.lower() in x.lower()):
-                        s.append(x)
-        except Exception:
-            print("Errore")
-        try:
-            for x in response.xpath('//p/text()').extract():
-                if("*" in j):
-                    if(testmultiple(j.lower(),x.lower())):
-                        s.append(x)
-                else:
-                    if(j.lower() in x.lower()):
-                        s.append(x)
-        except Exception:
-            print("Errore")
-        try:
-            for x in response.xpath('//td/text()').extract():
-                if("*" in j):
-                    if(testmultiple(j.lower(),x.lower())):
-                        s.append(x)
-                else:
-                    if(j.lower() in x.lower()):
-                        s.append(x)
-        except Exception:
-            print("Errore")
-        try:
-            for x in response.xpath('//li/text()').extract():
-                if("*" in j):
-                    if(testmultiple(j.lower(),x.lower())):
-                        s.append(x)
-                else:
-                    if(j.lower() in x.lower()):
-                        s.append(x)
-        except Exception:
-            print("Errore")
-        try:
-            for x in response.xpath('//ul/text()').extract():
-                if("*" in j):
-                    if(testmultiple(j.lower(),x.lower())):
-                        s.append(x)
-                else:
-                    if(j.lower() in x.lower()):
-                        s.append(x)
-        except Exception:
-            print("Errore")
-        try:
-            for x in response.xpath('//span/text()').extract():
-                if("*" in j):
-                    if(testmultiple(j.lower(),x.lower())):
-                        s.append(x)
+        for e in element:
+            try:
+                for x in response.xpath('//'+e+'/text()').extract():
+                    if("*" in j):
+                        if(testmultiple(j.lower(),x.lower())):
+                            s.append(x)
                     else:
                         if(j.lower() in x.lower()):
                             s.append(x)
-        except Exception:
-            print("Errore")
+            except Exception:
+                continue
+    
     return s
 
 def getHost(url):
@@ -165,7 +111,7 @@ class searchSpider(scrapy.Spider):
                 urls.append(x[0:len(x)-1])
             else:
                 urls.append(x)
-#        urls = ["https://quotes.toscrape.com/","https://quotes.toscrape.com/page/2/"]
+     #  urls = ["https://quotes.toscrape.com/page/1/","https://quotes.toscrape.com/page/2/"]
         for url in urls:
             self.root = getHost(url)
             #print("Metodo principale root: "+self.root)
