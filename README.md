@@ -10,14 +10,14 @@ pip3 install Scrapy
 2. cd  crawler/scrapy/crawler/crawler/ 
 
 
-#usage example (clearnet):
+# usage example (clearnet):
 
 
 1. scrapy  crawl search  -a file=path/of/my/url.txt -a string="String1/String2/String3/String4_part1\*String4_part2" -a splitchar=/ 
 2. result saved in "result.json"
 
 
-If you want use this for search in the dark net:
+# usage example (dark web):
 
 1. apt-get install tor -y
 2. /etc/init.d/tor start
