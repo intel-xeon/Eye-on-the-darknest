@@ -5,7 +5,6 @@ import time
 import urllib.parse
 import getopt
 import sys
-from scrapy.exporters import JsonItemExporter
 
 
 def testmultiple(q,stringa):
