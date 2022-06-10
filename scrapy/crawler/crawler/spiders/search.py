@@ -7,6 +7,19 @@ import getopt
 import sys
 from scrapy.exporters import JsonItemExporter
 
+
+def testmultiple(q,stringa):
+    app = 0
+    for x in q.split("*"):
+        if (x in stringa):
+            app = stringa.index(x)+len(x)
+            stringa = stringa[app:]
+        else:
+            return False
+    return True
+
+
+
 def searchforstring(response,string,splitchar):
     s = []
     list_string = string.split(splitchar)
@@ -15,38 +28,72 @@ def searchforstring(response,string,splitchar):
             continue
         try:
             for x in response.xpath('//div/text()').extract():
-                if(j.lower() in x.lower()):
-                    s.append(x)
+                if("*" in j):
+                    if(testmultiple(j.lower(),x.lower())):
+                        s.append(x)
+                else:
+                    if(j.lower() in x.lower()):
+                        s.append(x)
         except Exception:
             print("Errore")
         try:
             for x in response.xpath('//a/text()').extract():
-                if(j.lower() in x.lower()):
-                    s.append(x)
+                if("*" in j):
+                    if(testmultiple(j.lower(),x.lower())):
+                        s.append(x)
+                else:
+                    if(j.lower() in x.lower()):
+                        s.append(x)
         except Exception:
             print("Errore")
         try:
             for x in response.xpath('//p/text()').extract():
-                if(j.lower() in x.lower()):
-                    s.append(x)
+                if("*" in j):
+                    if(testmultiple(j.lower(),x.lower())):
+                        s.append(x)
+                else:
+                    if(j.lower() in x.lower()):
+                        s.append(x)
         except Exception:
             print("Errore")
         try:
             for x in response.xpath('//td/text()').extract():
-                if(j.lower() in x.lower()):
-                    s.append(x)
+                if("*" in j):
+                    if(testmultiple(j.lower(),x.lower())):
+                        s.append(x)
+                else:
+                    if(j.lower() in x.lower()):
+                        s.append(x)
         except Exception:
             print("Errore")
         try:
             for x in response.xpath('//li/text()').extract():
-                if(j.lower() in x.lower()):
-                    s.append(x)
+                if("*" in j):
+                    if(testmultiple(j.lower(),x.lower())):
+                        s.append(x)
+                else:
+                    if(j.lower() in x.lower()):
+                        s.append(x)
         except Exception:
             print("Errore")
         try:
             for x in response.xpath('//ul/text()').extract():
-                if(j.lower() in x.lower()):
-                    s.append(x)
+                if("*" in j):
+                    if(testmultiple(j.lower(),x.lower())):
+                        s.append(x)
+                else:
+                    if(j.lower() in x.lower()):
+                        s.append(x)
+        except Exception:
+            print("Errore")
+        try:
+            for x in response.xpath('//span/text()').extract():
+                if("*" in j):
+                    if(testmultiple(j.lower(),x.lower())):
+                        s.append(x)
+                    else:
+                        if(j.lower() in x.lower()):
+                            s.append(x)
         except Exception:
             print("Errore")
     return s
@@ -119,7 +166,7 @@ class searchSpider(scrapy.Spider):
                 urls.append(x[0:len(x)-1])
             else:
                 urls.append(x)
-     #  urls = ["https://quotes.toscrape.com/page/1/","https://quotes.toscrape.com/page/2/"]
+#        urls = ["https://quotes.toscrape.com/","https://quotes.toscrape.com/page/2/"]
         for url in urls:
             self.root = getHost(url)
             #print("Metodo principale root: "+self.root)
