@@ -16,7 +16,7 @@ def testmultiple(q,stringa):
             stringa = stringa[app:]
         else:
             return False
-    print("Sto per dare true qui q:"+q+" stringa:"+stringa)
+    #print("Sto per dare true qui q:"+q+" stringa:"+stringa)
     return True
 
 
