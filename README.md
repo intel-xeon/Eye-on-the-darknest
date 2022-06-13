@@ -1,9 +1,9 @@
-<a href="https://www.instagram.com/luke_fireeye_1996/?hl=bn
+<a href="https://www.instagram.com/luke_fireeye_1996/
 " ><img src="https://img.shields.io/badge/@luke__fireeye__1996-Instragram-blue" /> </a><img src="https://img.shields.io/badge/Python-3.8%20%7C%203.10-00e600.svg" />
 <img src="https://img.shields.io/badge/dark%20web-clearnet-blue" />
 # Eye on the darknest
 
-Eye on the darknest which helps you find valuable information on the web. Based on keyword search, it searches a set of urls for the keywords you want. For each url provided, Eye on the darknest searches for keywords recursively in the links in the same. 
+Eye on the darknest helps you find valuable information on the web. Based on keyword search, it searches a set of urls for the keywords you want. For each url provided, Eye on the darknest searches for keywords recursively in the links in the same. 
 
 <h3> Install dependencies</h3>
 
@@ -25,7 +25,7 @@ Eye on the darknest which helps you find valuable information on the web. Based 
 
 
 <pre class="notranslate">
-<code>scrapy  crawl search  -a file=path/of/my/url.txt -a string="String1/String2/String3/String4_part1\*String4_part2" -a splitchar=/</code>
+<code>scrapy  crawl search  -a file=path/of/my/url.txt -a string="String1/String2/String3/String4_part1*String4_part2/Stri ng5" -a splitchar=/</code>
 </pre>
 
 result saved in "result.json"
@@ -59,9 +59,8 @@ Import data where and how you want thanks to export in JSON format
 
 <ul>
   <li> Hunchly https://www.hunch.ly/darkweb-osint/</li>
-  <li>H-Indexer http://jncyepk6zbnosf4p.onion/onions.html</li>
-  <li>Tor66 http://tor66sewebgixwhcqfnp5inzp5x5uohhdy3kvtnyfxc2e5mxiuh34iid.onion/fresh
-</li>
+  <li>Darknet.fail https://darknet.fail/</li>
+  <li>Tor66 http://tor66sewebgixwhcqfnp5inzp5x5uohhdy3kvtnyfxc2e5mxiuh34iid.onion/fresh</li>
 </ul> 
  
 
