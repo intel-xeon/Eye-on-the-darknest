@@ -8,6 +8,10 @@ import sys
 from scrapy.exporters import JsonItemExporter
 
 
+
+escape_char_double = "ESCAPING_CHARACTER_FOR_DOUBLE_QUOTES"
+escape_char_one = "ESCAPING_CHARACTER_FOR_ONE_QUOTES"
+
 def testmultiple(q,stringa):
     app = 0
     for x in q.split("*"):
@@ -19,12 +23,27 @@ def testmultiple(q,stringa):
     #print("Sto per dare true qui q:"+q+" stringa:"+stringa)
     return True
 
+def writereport(lista):
+    w = "["
+    for x in lista:
+        k = str(x).replace("'",'"')
+        k = k.replace(escape_char_one,"'")
+        k = k.replace(escape_char_double,'\\"')
+        w+=k
+        w+=","
+    w = w[0:len(w)-1]
+    w+="]"
+    f = open("result.json", "w")
+    f.write(str(w))
+    f.close()
+
 
 
 def searchforstring(response,string,splitchar):
     #element = ["div","a","p","td","li","ul","small"]
     element = ['a','abbr','acronym','address','applet','area','article','aside','audio','b','base','basefont','bdi','bdo','bgsound','big','blink','blockquote','body','br','button','canvas','caption','center','circle','cite','clipPath','code','col','colgroup','command','content','data','datalist','dd','defs','del','details','dfn','dialog','dir','div','dl','dt','element','ellipse','em','embed','fieldset','figcaption','figure','font','footer','foreignObject','form','frame','frameset','g','h1','h2','h3','h4','h5','h6','head','header','hgroup','hr','html','i','iframe','image','img','input','ins','isindex','kbd','keygen','label','legend','li','line','linearGradient','link','listing','main','map','mark','marquee','mask','math','menu','menuitem','meta','meter','multicol','nav','nextid','nobr','noembed','noframes','noscript','object','ol','optgroup','option','output','p','param','path','pattern','picture','plaintext','polygon','polyline','pre','progress','q','radialGradient','rb','rbc','rect','rp','rt','rtc','ruby','s','samp','script','section','select','shadow','slot','small','source','spacer','span','stop','strike','strong','style','sub','summary','sup','svg','table','tbody','td','template','text','textarea','tfoot','th','thead','time','title','tr','track','tspan','tt','u','ul','var','video','wbr','xmp']
     s = {}
+    k = []
     list_string = string.split(splitchar)
     for j in list_string:
         if(len(j)==0):
@@ -35,15 +54,23 @@ def searchforstring(response,string,splitchar):
                 for x in response.xpath('//'+e+'/text()').extract():
                     if("*" in j):
                         if(testmultiple(j.lower(),x.lower())):
+                            x=x.replace("'",escape_char_one)
+                            x=x.replace('"',escape_char_double)
+                            x = x.replace("\xa0",' ') #Rimozione carattere sporco \xa0
                             s[j].append(x)
                     else:
                         if(j.lower() in x.lower()):
+                            x=x.replace("'",escape_char_one)
+                            x=x.replace('"',escape_char_double)
+                            x = x.replace("\xa0",' ') #Rimozione carattere sporco \xa0
                             s[j].append(x)
             except Exception:
                 continue
         if (len(s[j])==0):
             s.pop(j)
-    return s
+        else:
+            k.append(j)
+    return (s,k)
 
 def getHost(url):
     parsed_url = urllib.parse.urlparse(url)
@@ -154,11 +181,9 @@ class searchSpider(scrapy.Spider):
                 yield scrapy.Request(url=proc, callback=self.parse,cb_kwargs=dict(radix=radix,switch=switch,list_json=list_json))
         
         matched = searchforstring(response,self.string,self.splitchar)
-        if len(matched)>0:
-            list_json.append({'url':response.url,'title': response.css('title::text').get(),'match':matched})
-            f = open("result.json", "w")
-            f.write(str(list_json))
-            f.close()
+        if len(matched[0])>0:
+            list_json.append({'url':response.url,'title': response.css('title::text').get(),'key':matched[1],'match':matched[0]})
+            writereport(list_json)
 
         #    yield {'url':response.url,'title': response.css('title::text').get(),'match':matched}
         
