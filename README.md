@@ -1,9 +1,9 @@
 <a href="https://www.instagram.com/luke_fireeye_1996/
-" ><img src="https://img.shields.io/badge/@luke__fireeye__1996-Instragram-blue" /> </a><img src="https://img.shields.io/badge/Python-3.8%20%7C%203.10-00e600.svg" />
+" ><img src="https://img.shields.io/badge/@luke__fireeye__1996-Instragram-blue" /> </a><img src="https://img.shields.io/badge/Tested on Python-3.8%20%7C%203.10-00e600.svg" />
 <img src="https://img.shields.io/badge/dark%20web-clearnet-blue" />
 # Eye on the darknest
 
-Eye on the darknest helps you find valuable information on the web. Based on keyword search, it searches a set of urls for the keywords you want. For each url provided, Eye on the darknest searches for keywords recursively in the links in the same. 
+Eye on the darknest helps you find valuable information on the web. <br><br>Based on keyword search, it searches a set of urls for the keywords you want. For each url provided, Eye on the darknest searches for keywords recursively in the links in the same. 
 
 <h3> Install dependencies</h3>
 
