@@ -49,11 +49,23 @@ result saved in "result.json"
 <code>torify scrapy  crawl search -a file=path/of/my/url.txt -a string="String1/String2/String3/String4_part1\*String4_part2" -a splitchar=/</code>
 </pre>
 
+<h3> Recursive </h3>
+
+
+Do not specify all URLs within a site. Pass a single URL and let Eye on the darknest scan him all the links there!
+
+![image](https://user-images.githubusercontent.com/37773731/173607760-057a95ea-6863-4d70-83cb-c10d5bd6cf52.png)
+
+
 <h3> Export data in JSON </h3>
 
 Import data where and how you want thanks to export in JSON format
 
-![image](https://user-images.githubusercontent.com/37773731/173086355-33c0b2e8-5c6b-432a-aad2-771ac86cf554.png)
+![image](https://user-images.githubusercontent.com/37773731/173606954-b7f608db-7eb8-4299-97b1-060e2bf8c143.png)
+
+
+
+
 
 <h3>You can find a list of onion site here:</h3>
 
