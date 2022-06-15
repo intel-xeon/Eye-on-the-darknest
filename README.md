@@ -54,20 +54,20 @@ result saved in "result.json"
 
 Do not specify all URLs within a site. Pass a single URL and let Eye on the darknest scan him all the links there!
 
-![image](https://user-images.githubusercontent.com/37773731/173607760-057a95ea-6863-4d70-83cb-c10d5bd6cf52.png)
+![image](https://user-images.githubusercontent.com/37773731/173873565-33e26333-a001-47a1-872b-6b61fdbb4875.png)
 
 
 <h3> Export data in JSON </h3>
 
 Import data where and how you want thanks to export in JSON format
 
-![image](https://user-images.githubusercontent.com/37773731/173606954-b7f608db-7eb8-4299-97b1-060e2bf8c143.png)
+![image](https://user-images.githubusercontent.com/37773731/173873250-b4860127-65ed-4a75-9f10-cc3becd69e87.png)
 
 
 
 
 
-<h3>You can find a list of onion site here:</h3>
+<h3>you can find lists of .onion sites here:</h3>
 
 <ul>
   <li> Hunchly https://www.hunch.ly/darkweb-osint/</li>
@@ -84,5 +84,3 @@ Import data where and how you want thanks to export in JSON format
 3. Cyber Security Threat Intelligence Analyst
 4. Undercover agents
 
-
-<br><br>Author: Luca Marsilia
