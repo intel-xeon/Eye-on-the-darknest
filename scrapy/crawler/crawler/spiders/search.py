@@ -43,7 +43,7 @@ def searchforstring(response,string,splitchar):
     #element = ["div","a","p","td","li","ul","small"]
     element = ['a','abbr','acronym','address','applet','area','article','aside','audio','b','base','basefont','bdi','bdo','bgsound','big','blink','blockquote','body','br','button','canvas','caption','center','circle','cite','clipPath','code','col','colgroup','command','content','data','datalist','dd','defs','del','details','dfn','dialog','dir','div','dl','dt','element','ellipse','em','embed','fieldset','figcaption','figure','font','footer','foreignObject','form','frame','frameset','g','h1','h2','h3','h4','h5','h6','head','header','hgroup','hr','html','i','iframe','image','img','input','ins','isindex','kbd','keygen','label','legend','li','line','linearGradient','link','listing','main','map','mark','marquee','mask','math','menu','menuitem','meta','meter','multicol','nav','nextid','nobr','noembed','noframes','noscript','object','ol','optgroup','option','output','p','param','path','pattern','picture','plaintext','polygon','polyline','pre','progress','q','radialGradient','rb','rbc','rect','rp','rt','rtc','ruby','s','samp','script','section','select','shadow','slot','small','source','spacer','span','stop','strike','strong','style','sub','summary','sup','svg','table','tbody','td','template','text','textarea','tfoot','th','thead','time','title','tr','track','tspan','tt','u','ul','var','video','wbr','xmp']
     s = {}
-    k = []
+    k = []      
     list_string = string.split(splitchar)
     for j in list_string:
         if(len(j)==0):
@@ -131,6 +131,11 @@ class searchSpider(scrapy.Spider):
     list_json=[]
     
     def start_requests(self):
+        if (len(self.splitchar)==0):
+            print ("Sorry.. you must specify splitchar exit..")
+            time.sleep(3)
+            return
+            
         urls=[]
         r = open(self.file,'r')
         for x in r:
@@ -153,17 +158,31 @@ class searchSpider(scrapy.Spider):
         #print("Mi è arrivato: "+radix)
         #print(response.url)
         #time.sleep(7)
+        try:
+            self.onlyscope
+        except Exception:
+            self.onlyscope = 'no'
         if(switch):
             switch = False
             u = []
             for k in self.le1.extract_links(response):
+                if(self.onlyscope.lower()=='yes'):
+                    if(radix not in k.url):
+                        continue
+                print(k.url)
                 u.append(k.url)
+            #time.sleep(2)
             links = response.xpath("//a").extract()
             for a in links:
                 ur = extractLink(response.url,a)
                 if ur is not None:
+                    if(self.onlyscope.lower()=='yes'):
+                        if(radix not in a):
+                            continue
+                    print(ur)
                     if (ur not in u and len(ur)>0):
                         u.append(ur)
+            time.sleep(2)
            # print("\n\n\n\n\n\n")
             for x in u:
                 print(x)
