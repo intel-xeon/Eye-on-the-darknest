@@ -42,13 +42,13 @@ def writereport(lista):
 def searchforstring(response,string,splitchar):
     #element = ["div","a","p","td","li","ul","small"]
     element = ['a','abbr','acronym','address','applet','area','article','aside','audio','b','base','basefont','bdi','bdo','bgsound','big','blink','blockquote','body','br','button','canvas','caption','center','circle','cite','clipPath','code','col','colgroup','command','content','data','datalist','dd','defs','del','details','dfn','dialog','dir','div','dl','dt','element','ellipse','em','embed','fieldset','figcaption','figure','font','footer','foreignObject','form','frame','frameset','g','h1','h2','h3','h4','h5','h6','head','header','hgroup','hr','html','i','iframe','image','img','input','ins','isindex','kbd','keygen','label','legend','li','line','linearGradient','link','listing','main','map','mark','marquee','mask','math','menu','menuitem','meta','meter','multicol','nav','nextid','nobr','noembed','noframes','noscript','object','ol','optgroup','option','output','p','param','path','pattern','picture','plaintext','polygon','polyline','pre','progress','q','radialGradient','rb','rbc','rect','rp','rt','rtc','ruby','s','samp','script','section','select','shadow','slot','small','source','spacer','span','stop','strike','strong','style','sub','summary','sup','svg','table','tbody','td','template','text','textarea','tfoot','th','thead','time','title','tr','track','tspan','tt','u','ul','var','video','wbr','xmp']
-    s = {}
     k = []      
     list_string = string.split(splitchar)
     for j in list_string:
         if(len(j)==0):
             continue
-        s[j]=[]
+        s = {"key":j}
+        match = []
         for e in element:
             try:
                 for x in response.xpath('//'+e+'/text()').extract():
@@ -57,20 +57,21 @@ def searchforstring(response,string,splitchar):
                             x=x.replace("'",escape_char_one)
                             x=x.replace('"',escape_char_double)
                             x = x.replace("\xa0",' ') #Rimozione carattere sporco \xa0
-                            s[j].append(x)
+                            match.append(x)
                     else:
                         if(j.lower() in x.lower()):
                             x=x.replace("'",escape_char_one)
                             x=x.replace('"',escape_char_double)
                             x = x.replace("\xa0",' ') #Rimozione carattere sporco \xa0
-                            s[j].append(x)
+                            match.append(x)
             except Exception:
                 continue
-        if (len(s[j])==0):
-            s.pop(j)
+        if (len(match)==0):
+            continue
         else:
-            k.append(j)
-    return (s,k)
+            s["match"] = match
+            k.append(s)
+    return k
 
 def getHost(url):
     parsed_url = urllib.parse.urlparse(url)
@@ -182,7 +183,7 @@ class searchSpider(scrapy.Spider):
                     print(ur)
                     if (ur not in u and len(ur)>0):
                         u.append(ur)
-            time.sleep(2)
+            #time.sleep(2)
            # print("\n\n\n\n\n\n")
             for x in u:
                 print(x)
@@ -200,8 +201,8 @@ class searchSpider(scrapy.Spider):
                 yield scrapy.Request(url=proc, callback=self.parse,cb_kwargs=dict(radix=radix,switch=switch,list_json=list_json))
         
         matched = searchforstring(response,self.string,self.splitchar)
-        if len(matched[0])>0:
-            list_json.append({'url':response.url,'title': response.css('title::text').get(),'key':matched[1],'match':matched[0]})
+        if len(matched)>0:
+            list_json.append({'url':response.url,'title': response.css('title::text').get(),'data':matched})
             writereport(list_json)
 
         #    yield {'url':response.url,'title': response.css('title::text').get(),'match':matched}
