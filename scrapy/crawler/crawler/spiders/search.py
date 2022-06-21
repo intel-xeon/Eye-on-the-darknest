@@ -1,7 +1,7 @@
 import scrapy
 from scrapy.spiders import  Rule
 from scrapy.linkextractors import LinkExtractor
-from time import sleep
+import time
 import urllib.parse
 import unicodedata
 from scrapy.exporters import JsonItemExporter
@@ -27,41 +27,36 @@ def writereport(lista):
         w+=","
     w = w[0:len(w)-1]
     w+="]"
-    f = open("result.json", "w")
+    f = open("/var/www/html/provola.json", "w")
     f.write(str(w))
     f.close()
 
 
 
-def searchforstring(response,string,splitchar):
+def searchforstring(response,string):
     element = ['a','abbr','acronym','address','applet','area','article','aside','audio','b','base','basefont','bdi','bdo','bgsound','big','blink','blockquote','body','br','button','canvas','caption','center','circle','cite','clipPath','code','col','colgroup','command','content','data','datalist','dd','defs','del','details','dfn','dialog','dir','div','dl','dt','element','ellipse','em','embed','fieldset','figcaption','figure','font','footer','foreignObject','form','frame','frameset','g','h1','h2','h3','h4','h5','h6','head','header','hgroup','hr','html','i','iframe','image','img','input','ins','isindex','kbd','keygen','label','legend','li','line','linearGradient','link','listing','main','map','mark','marquee','mask','math','menu','menuitem','meta','meter','multicol','nav','nextid','nobr','noembed','noframes','noscript','object','ol','optgroup','option','output','p','param','path','pattern','picture','plaintext','polygon','polyline','pre','progress','q','radialGradient','rb','rbc','rect','rp','rt','rtc','ruby','s','samp','script','section','select','shadow','slot','small','source','spacer','span','stop','strike','strong','style','sub','summary','sup','svg','table','tbody','td','template','text','textarea','tfoot','th','thead','time','title','tr','track','tspan','tt','u','ul','var','video','wbr','xmp']
-    k = []      
-    list_string = string.split(splitchar)
-    for j in list_string:
-        if(len(j)==0):
+    k = []
+    match = []
+    for e in element:
+        try:
+            for x in response.xpath('//'+e+'/text()').extract():
+                if("*" in string):
+                    if(testmultiple(string.lower(),x.lower())):
+                        x = html.escape(x)
+                        x = unicodedata.normalize("NFKD", x) # serve per pulire carattere sporco \xa0
+                        match.append(x)
+                else:
+                    if(string.lower() in x.lower()):
+                        x = html.escape(x)
+                        x = unicodedata.normalize("NFKD", x) # serve per pulire carattere sporco \xa0
+                        match.append(x)
+        except Exception:
             continue
-        s = {"key":j}
-        match = []
-        for e in element:
-            try:
-                for x in response.xpath('//'+e+'/text()').extract():
-                    if("*" in j):
-                        if(testmultiple(j.lower(),x.lower())):
-                            x = unicodedata.normalize("NFKD", x) # serve per pulire carattere sporco \xa0
-                            x = html.escape(x)
-                            match.append(x)
-                    else:
-                        if(j.lower() in x.lower()):
-                            x = html.escape(x)
-                            x = unicodedata.normalize("NFKD", x) # serve per pulire carattere sporco \xa0
-                            match.append(x)
-            except Exception:
-                continue
         if (len(match)==0):
             continue
         else:
-            s["match"] = match
-            k.append(s)
+            k.append(match)
+            match = []
     return k
 
 def getHost(url):
@@ -158,10 +153,11 @@ class searchSpider(scrapy.Spider):
                     switch = False
                 yield scrapy.Request(url=proc, callback=self.parse,cb_kwargs=dict(radix=radix,switch=switch,list_json=list_json))
         
-        matched = searchforstring(response,self.string,self.splitchar)
-        if len(matched)>0:
-            list_json.append({'url':response.url,'title': response.css('title::text').get(),'data':matched})
-            writereport(list_json)
-        
-
-    
+        list_string = self.string.split(self.splitchar)
+        for x in list_string:
+            if (len(x)==0):
+                continue
+            matched = searchforstring(response,x)
+            if len(matched)>0:
+                list_json.append({'key':x,'url':response.url,'title': response.css('title::text').get(),'matched':matched})
+                writereport(list_json)
