@@ -27,7 +27,7 @@ def writereport(lista):
         w+=","
     w = w[0:len(w)-1]
     w+="]"
-    f = open("/var/www/html/provola.json", "w")
+    f = open("result.json", "w")
     f.write(str(w))
     f.close()
 
