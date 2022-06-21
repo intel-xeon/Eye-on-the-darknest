@@ -27,7 +27,7 @@ def writereport(lista):
         w+=","
     w = w[0:len(w)-1]
     w+="]"
-    f = open("result.json", "w")
+    f = open("/var/www/html/provola.json", "w")
     f.write(str(w))
     f.close()
 
@@ -144,9 +144,8 @@ class searchSpider(scrapy.Spider):
                     print(ur)
                     if (ur not in u and len(ur)>0):
                         u.append(ur)
-            for x in u:
-                print(x)
             for proc in u:
+                print(proc)
                 if (radix in getHost(proc)):
                     switch = True
                 else:
