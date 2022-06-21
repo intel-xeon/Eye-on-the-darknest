@@ -20,14 +20,14 @@ def testmultiple(q,stringa):
     return True
 
 def writereport(lista):
-    w = "["
+    w = "{\"data\":["
     for x in lista:
         k = str(x).replace("'",'"')
         w+=k
         w+=","
     w = w[0:len(w)-1]
-    w+="]"
-    f = open("result.json", "w")
+    w+="]}"
+    f = open("/var/www/html/out/nuovo.json", "w")
     f.write(str(w))
     f.close()
 
@@ -174,3 +174,6 @@ class searchSpider(scrapy.Spider):
                             break
                         i+=1
                     writereport(list_json)
+
+
+                            
