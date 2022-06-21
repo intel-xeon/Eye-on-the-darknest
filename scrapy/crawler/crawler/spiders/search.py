@@ -27,15 +27,14 @@ def writereport(lista):
         w+=","
     w = w[0:len(w)-1]
     w+="]"
-    f = open("/var/www/html/provola.json", "w")
+    f = open("result.json", "w")
     f.write(str(w))
     f.close()
 
 
 
-def searchforstring(response,string):
+def searchforstring(response,string,url):
     element = ['a','abbr','acronym','address','applet','area','article','aside','audio','b','base','basefont','bdi','bdo','bgsound','big','blink','blockquote','body','br','button','canvas','caption','center','circle','cite','clipPath','code','col','colgroup','command','content','data','datalist','dd','defs','del','details','dfn','dialog','dir','div','dl','dt','element','ellipse','em','embed','fieldset','figcaption','figure','font','footer','foreignObject','form','frame','frameset','g','h1','h2','h3','h4','h5','h6','head','header','hgroup','hr','html','i','iframe','image','img','input','ins','isindex','kbd','keygen','label','legend','li','line','linearGradient','link','listing','main','map','mark','marquee','mask','math','menu','menuitem','meta','meter','multicol','nav','nextid','nobr','noembed','noframes','noscript','object','ol','optgroup','option','output','p','param','path','pattern','picture','plaintext','polygon','polyline','pre','progress','q','radialGradient','rb','rbc','rect','rp','rt','rtc','ruby','s','samp','script','section','select','shadow','slot','small','source','spacer','span','stop','strike','strong','style','sub','summary','sup','svg','table','tbody','td','template','text','textarea','tfoot','th','thead','time','title','tr','track','tspan','tt','u','ul','var','video','wbr','xmp']
-    k = []
     match = []
     for e in element:
         try:
@@ -54,10 +53,8 @@ def searchforstring(response,string):
             continue
         if (len(match)==0):
             continue
-        else:
-            k.append(match)
-            match = []
-    return k
+    
+    return {"url":url, "matched":match}
 
 def getHost(url):
     parsed_url = urllib.parse.urlparse(url)
@@ -85,6 +82,13 @@ def extractLink(url,link):
         return domain+uri
     else:
         return uri
+
+def existKey(key,list_json):
+    for x in list_json:
+        if(x["key"]==html.escape(key)):
+            return True
+    return False
+    
 
 class searchSpider(scrapy.Spider):
     
@@ -144,8 +148,9 @@ class searchSpider(scrapy.Spider):
                     print(ur)
                     if (ur not in u and len(ur)>0):
                         u.append(ur)
+            for x in u:
+                print(x)
             for proc in u:
-                print(proc)
                 if (radix in getHost(proc)):
                     switch = True
                 else:
@@ -156,7 +161,16 @@ class searchSpider(scrapy.Spider):
         for x in list_string:
             if (len(x)==0):
                 continue
-            matched = searchforstring(response,x)
-            if len(matched)>0:
-                list_json.append({'key':x,'url':response.url,'title': response.css('title::text').get(),'matched':matched})
-                writereport(list_json)
+            matched = searchforstring(response,x,response.url)
+            if len(matched["matched"])>0:
+                if (existKey(x,list_json)==False):
+                    list_json.append({'key':html.escape(x),'title': html.escape(response.css('title::text').get()),'matched':[matched]})
+                    writereport(list_json)
+                else:
+                    i = 0
+                    for k in list_json:
+                        if(k["key"]==x):
+                            list_json[i]["matched"].append(matched)
+                            break
+                        i+=1
+                    writereport(list_json)
