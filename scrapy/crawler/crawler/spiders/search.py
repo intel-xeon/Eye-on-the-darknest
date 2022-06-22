@@ -61,7 +61,7 @@ def validatepath(path):
 
 
 
-def searchforstring(response,string,url):
+def searchforstring(response,string,url,title):
     element = ['a','abbr','acronym','address','applet','area','article','aside','audio','b','base','basefont','bdi','bdo','bgsound','big','blink','blockquote','body','br','button','canvas','caption','center','circle','cite','clipPath','code','col','colgroup','command','content','data','datalist','dd','defs','del','details','dfn','dialog','dir','div','dl','dt','element','ellipse','em','embed','fieldset','figcaption','figure','font','footer','foreignObject','form','frame','frameset','g','h1','h2','h3','h4','h5','h6','head','header','hgroup','hr','html','i','iframe','image','img','input','ins','isindex','kbd','keygen','label','legend','li','line','linearGradient','link','listing','main','map','mark','marquee','mask','math','menu','menuitem','meta','meter','multicol','nav','nextid','nobr','noembed','noframes','noscript','object','ol','optgroup','option','output','p','param','path','pattern','picture','plaintext','polygon','polyline','pre','progress','q','radialGradient','rb','rbc','rect','rp','rt','rtc','ruby','s','samp','script','section','select','shadow','slot','small','source','spacer','span','stop','strike','strong','style','sub','summary','sup','svg','table','tbody','td','template','text','textarea','tfoot','th','thead','time','title','tr','track','tspan','tt','u','ul','var','video','wbr','xmp']
     match = []
     for e in element:
@@ -82,7 +82,7 @@ def searchforstring(response,string,url):
         if (len(match)==0):
             continue
     
-    return {"url":url, "matched":match}
+    return {"url":url,"title":html.escape(title),"matched":match}
 
 def getHost(url):
     parsed_url = urllib.parse.urlparse(url)
@@ -193,10 +193,10 @@ class searchSpider(scrapy.Spider):
         for x in list_string:
             if (len(x)==0):
                 continue
-            matched = searchforstring(response,x,response.url)
+            matched = searchforstring(response,x,response.url,str(response.css('title::text').get()))
             if len(matched["matched"])>0:
                 if (existKey(x,list_json)==False):
-                    list_json.append({'key':html.escape(x),'title': html.escape(response.css('title::text').get()),'matched':[matched]})
+                    list_json.append({'key':html.escape(x),'matched':[matched]})
                     writereport(list_json,self.path)
                 else:
                     i = 0
