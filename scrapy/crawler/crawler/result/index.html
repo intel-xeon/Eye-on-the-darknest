@@ -6,13 +6,20 @@
 <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 <script>
 function format(d) {
+	console.log(JSON.stringify(d))
     data="";
 	for (let i=0;i<d.matched.length;i++){
 	data+='<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
         '<tr>' +
-        '<td>Url:</td>' +
+        '<td>URL:</td>' +
         '<td>' +
         d.matched[i].url +
+        '</td>' +
+        '</tr>' +
+		'<tr>' +
+        '<td>Title:</td>' +
+        '<td>' +
+        d.matched[i].title+
         '</td>' +
         '</tr>' +
         '<tr>' +
@@ -21,6 +28,7 @@ function format(d) {
         d.matched[i].matched.toString().replaceAll(d.key,"<strong>"+d.key+"</strong>") +
         '</td>' +
         '</tr>' +
+		
         '</table><br><br><br>';
 	}
 	return data;
@@ -35,9 +43,12 @@ $(document).ready(function () {
                 data: null,
                 defaultContent: '',
             },
-            { data: 'key' }
+            { data: 'key' },
         ],
         order: [[1, 'asc']],
+	language: {
+        searchPlaceholder: "Search for a keyword.."
+    }
     });
     $('#result_table tbody').on('click', 'td.dt-control', function () {
         var tr = $(this).closest('tr');
@@ -52,9 +63,10 @@ $(document).ready(function () {
         }
     });
 });
-
 </script>
 <div class="container">
+<h2>Eye on the darknest table:</h2>
+<p>here you can monitor the progress of your research</p>
 <table id="result_table" class="display" style="width:100%">
         <thead>
             <tr>
