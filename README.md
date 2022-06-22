@@ -54,18 +54,17 @@ result saved in "result.json"
 
 Do not specify all URLs within a site. Pass a single URL and let Eye on the darknest scan him all the links there!
 
-![image](https://user-images.githubusercontent.com/37773731/173873565-33e26333-a001-47a1-872b-6b61fdbb4875.png)
-
+![image](https://user-images.githubusercontent.com/37773731/174990876-6b5b1850-5b74-48c9-9a75-da779906360c.png)
 
 <h3> Export data in JSON </h3>
 
 Import data where and how you want thanks to export in JSON format
 
-![image](https://user-images.githubusercontent.com/37773731/173873250-b4860127-65ed-4a75-9f10-cc3becd69e87.png)
+![image](https://user-images.githubusercontent.com/37773731/174990596-5c2c2ead-4233-4895-8f04-775550f5e147.png)
 
+<h3>Generate custom and automated HTML datatable of your keywords</h3>
 
-
-
+![image](https://user-images.githubusercontent.com/37773731/174991241-4af05ddf-91fd-4051-a96a-17dacd3dea31.png)
 
 <h3>you can find lists of .onion sites here:</h3>
 
@@ -75,6 +74,7 @@ Import data where and how you want thanks to export in JSON format
   <li>Tor66 http://tor66sewebgixwhcqfnp5inzp5x5uohhdy3kvtnyfxc2e5mxiuh34iid.onion/fresh</li>
 </ul> 
  
+
 
 
 <h3> Recommended users: </h3>
