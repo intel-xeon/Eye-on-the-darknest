@@ -6,8 +6,7 @@ import urllib.parse
 import unicodedata
 from scrapy.exporters import JsonItemExporter
 import html
-
-
+import os
 
 def testmultiple(q,stringa):
     app = 0
@@ -19,7 +18,7 @@ def testmultiple(q,stringa):
             return False
     return True
 
-def writereport(lista):
+def writereport(lista,path):
     w = "{\"data\":["
     for x in lista:
         k = str(x).replace("'",'"')
@@ -27,9 +26,38 @@ def writereport(lista):
         w+=","
     w = w[0:len(w)-1]
     w+="]}"
-    f = open("result/result.json", "w")
+    temp = open("result/index.html",'r')
+    html = open(path+"index.html","w")
+    f = open(path+"result.json", "w")
+    html.write(temp.read())
     f.write(str(w))
     f.close()
+    temp.close()
+    html.close()
+
+def validatepath(path):
+    app = path
+    if (os.path.isfile(path)):
+        path = os.path.dirname(filepath)+"/"
+    if (not path[len(path)-1]=='/'):
+        path+='/'
+        app = path
+    if (not os.path.isdir(path) and not path==''):
+        try:
+            os.makedirs(path)
+            print("path "+path+" are not present in file system.. created!")
+        except Exception:
+            if (os.access(path+"index.html",os.W_OK) and os.access(path+"result.json",os.W_OK)):
+                print("I can't write to "+path+" exit... \n path setted to project directory")
+                path= ""
+    if (not app==path):
+        if(len(path)>0):
+            print("Sorry.. but your path ("+app+") isn't availabe for permission problems.. i choose another path for you:",path)
+        else:
+            print("Sorry.. but your path ("+app+") isn't availabe for permission problems.. result will be saved into the project directory")
+        time.sleep(3)
+    return path
+    
 
 
 
@@ -129,6 +157,12 @@ class searchSpider(scrapy.Spider):
             self.onlyscope
         except Exception:
             self.onlyscope = 'no'
+        try:
+            self.path
+        except Exception:
+            self.path = ''
+        if(len(self.path)>0):
+            self.path = validatepath(self.path)
         if(switch):
             switch = False
             u = []
@@ -148,8 +182,6 @@ class searchSpider(scrapy.Spider):
                     print(ur)
                     if (ur not in u and len(ur)>0):
                         u.append(ur)
-            for x in u:
-                print(x)
             for proc in u:
                 if (radix in getHost(proc)):
                     switch = True
@@ -165,7 +197,7 @@ class searchSpider(scrapy.Spider):
             if len(matched["matched"])>0:
                 if (existKey(x,list_json)==False):
                     list_json.append({'key':html.escape(x),'title': html.escape(response.css('title::text').get()),'matched':[matched]})
-                    writereport(list_json)
+                    writereport(list_json,self.path)
                 else:
                     i = 0
                     for k in list_json:
@@ -173,7 +205,4 @@ class searchSpider(scrapy.Spider):
                             list_json[i]["matched"].append(matched)
                             break
                         i+=1
-                    writereport(list_json)
-
-
-                            
+                    writereport(list_json,self.path)
