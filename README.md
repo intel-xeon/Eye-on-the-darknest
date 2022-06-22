@@ -46,7 +46,7 @@ result saved in "result.json"
 <code>netstat -plnt</code>
 </pre>
 <pre class="notranslate">
-<code>torify scrapy crawl search -a file=path/of/my/url.txt -a string="String1/String2/String3/String4_part1\*String4_part2" -a splitchar=/ -a onlyscope=yes -a path="/path/where/you/want/report"</code>
+<code>torify scrapy crawl search -a file=path/of/my/url.txt -a string="String1/String2/String3/String4_part1*String4_part2/Stri ng5" -a splitchar=/ -a onlyscope=yes -a path="/path/where/you/want/report"</code>
 </pre>
 
 <h3> Recursive </h3>
