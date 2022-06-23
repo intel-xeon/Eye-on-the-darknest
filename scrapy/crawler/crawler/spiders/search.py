@@ -1,208 +1,218 @@
-import scrapy
-from scrapy.spiders import  Rule
-from scrapy.linkextractors import LinkExtractor
+from ipwhois import IPWhois
+import socket
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 import time
-import urllib.parse
-import unicodedata
-from scrapy.exporters import JsonItemExporter
-import html
 import os
+import threading
+import urllib.request
+import validators
+try:
+    import queue
+except ImportError:
+    import Queue as queue
 
-def testmultiple(q,stringa):
-    app = 0
-    for x in q.split("*"):
-        if (x in stringa):
-            app = stringa.index(x)+len(x)
-            stringa = stringa[app:]
+#CONFIGURAZIONE INIZIALE
+
+
+# La lista delle URL da cui attingere per segnalare i siti di phishing (1 per linea)
+                                                                                       
+list_url_in_line =  ["https://openphish.com/feed.txt"]
+                                                                                       
+
+
+thread = 20                                     # thread paralleli indipendenti che verranno eseguiti contemporaneamente
+already_sign = "segnalato.txt"                  # File che conterrà la lista delle URL già segnalate.
+error_sign = "errore_nella_segnalazione.txt"    # File che conterrà la lista delle URL NON segnalate                                            
+smtp_server = "smtp.gmail.com"                  # smtp server
+smtp_port = 587                                 # smtp port
+sender_addr = "lukefireeye96@gmail.com"         # l'indirizzo email dal quale partiranno le segnalazioni
+sender_pa = "pfjzracjyjmcwssu"                  # la password dell'indirizzo email dal quale partiranno le segnalazioni
+trusted_email = "marsilialuca@gmail.com"        # Indirizzo email dove verrà notificato tramite email l'avvio dello script di segnalazione e della fine dello stesso
+
+
+check = True
+queue_url = queue.Queue()
+
+
+
+def getWhoisString(host):
+    host = socket.gethostbyname(host)
+    obj = IPWhois(host)
+    res=obj.lookup_whois()
+    who = "<strong>WHOIS</strong><br>"+"-"*100
+    for x in res:
+        who+="<br>"+x+": "
+        if(str(type(res[x]))=='<class \'list\'>'):
+            for j in res[x]:
+                who+="<br>"+str(j)
         else:
-            return False
-    return True
+            who+=str(res[x])
+    who+="<br>"+"-"*100
+    return who
 
-def writereport(lista,path):
-    w = "{\"data\":["
-    for x in lista:
-        k = str(x).replace("'",'"')
-        w+=k
-        w+=","
-    w = w[0:len(w)-1]
-    w+="]}"
-    temp = open("result/index.html",'r')
-    html = open(path+"index.html","w")
-    f = open(path+"result.json", "w")
-    html.write(temp.read())
-    f.write(str(w))
-    f.close()
-    temp.close()
-    html.close()
 
-def validatepath(path):
-    app = path
-    if (os.path.isfile(path)):
-        path = os.path.dirname(filepath)+"/"
-    if (not path[len(path)-1]=='/'):
-        path+='/'
-        app = path
-    if (not os.path.isdir(path) and not path==''):
+
+
+
+def avvio():
+    mail_content = "Script avviato"
+    sender_address = sender_addr
+    sender_pass = sender_pa
+    receiver_address = trusted_email
+    message = MIMEMultipart()
+    message['From'] = sender_address
+    message['To'] = receiver_address
+    message['Subject'] = 'SCRIPT AVVIATO'
+    message.attach(MIMEText(mail_content, 'html'))
+    session = smtplib.SMTP(smtp_server, smtp_port)
+    session.starttls()
+    session.login(sender_address, sender_pass)
+    text = message.as_string()
+    session.sendmail(sender_address, receiver_address, text)
+    session.quit()
+
+def fine():
+    mail_content = "Ho finito l'esecuzione dello script"
+    sender_address = sender_addr
+    sender_pass = sender_pa
+    receiver_address = trusted_email
+    message = MIMEMultipart()
+    message['From'] = sender_address
+    message['To'] = receiver_address
+    message['Subject'] = 'SCRIPT FINITO'
+    message.attach(MIMEText(mail_content, 'html'))
+    session = smtplib.SMTP(smtp_server, smtp_port)
+    session.starttls()
+    session.login(sender_address, sender_pass)
+    text = message.as_string()
+    session.sendmail(sender_address, receiver_address, text)
+    session.quit()
+
+def saveFile():
+    for x in list_url_in_line:
         try:
-            os.makedirs(path)
-            print("path "+path+" are not present in file system.. created!")
-        except Exception:
-            if (os.access(path+"index.html",os.W_OK) and os.access(path+"result.json",os.W_OK)):
-                print("I can't write to "+path+" exit... \n path setted to project directory")
-                path= ""
-    if (not app==path):
-        if(len(path)>0):
-            print("Sorry.. but your path ("+app+") isn't availabe for permission problems.. i choose another path for you:",path)
-        else:
-            print("Sorry.. but your path ("+app+") isn't availabe for permission problems.. result will be saved into the project directory")
-        time.sleep(3)
-    return path
-    
+            print("Tentando di prelevare le URL da "+x+" ..")
+            with urllib.request.urlopen(x) as url:
+                r = url.read().decode('utf-8')
+                with open("File.txt", "a") as myfile:
+                    myfile.write(r)
+        except Exception as err:
+            print("Non è stato possibile prelevare la lista dal sito "+x+"\n Stacktrace:",err)
 
-
-
-def searchforstring(response,string,url,title):
-    element = ['a','abbr','acronym','address','applet','area','article','aside','audio','b','base','basefont','bdi','bdo','bgsound','big','blink','blockquote','body','br','button','canvas','caption','center','circle','cite','clipPath','code','col','colgroup','command','content','data','datalist','dd','defs','del','details','dfn','dialog','dir','div','dl','dt','element','ellipse','em','embed','fieldset','figcaption','figure','font','footer','foreignObject','form','frame','frameset','g','h1','h2','h3','h4','h5','h6','head','header','hgroup','hr','html','i','iframe','image','img','input','ins','isindex','kbd','keygen','label','legend','li','line','linearGradient','link','listing','main','map','mark','marquee','mask','math','menu','menuitem','meta','meter','multicol','nav','nextid','nobr','noembed','noframes','noscript','object','ol','optgroup','option','output','p','param','path','pattern','picture','plaintext','polygon','polyline','pre','progress','q','radialGradient','rb','rbc','rect','rp','rt','rtc','ruby','s','samp','script','section','select','shadow','slot','small','source','spacer','span','stop','strike','strong','style','sub','summary','sup','svg','table','tbody','td','template','text','textarea','tfoot','th','thead','time','title','tr','track','tspan','tt','u','ul','var','video','wbr','xmp']
-    match = []
-    for e in element:
-        try:
-            for x in response.xpath('//'+e+'/text()').extract():
-                if("*" in string):
-                    if(testmultiple(string.lower(),x.lower())):
-                        x = html.escape(x)
-                        x = unicodedata.normalize("NFKD", x) # serve per pulire carattere sporco \xa0
-                        match.append(x)
-                else:
-                    if(string.lower() in x.lower()):
-                        x = html.escape(x)
-                        x = unicodedata.normalize("NFKD", x) # serve per pulire carattere sporco \xa0
-                        match.append(x)
-        except Exception:
-            continue
-        if (len(match)==0):
-            continue
-    
-    return {"url":url,"title":html.escape(title),"matched":match}
-
-def getHost(url):
-    parsed_url = urllib.parse.urlparse(url)
-    return parsed_url.netloc
-    
-
-
-def extractLink(url,link):
-    domain = url.split("/")[0]+'//'
-    domain += getHost(url)
-    try:
-        i = link.index("href=")+0
-    except Exception:
-        return ""
-    app = link[i:]
-    i = app.index('=')+2
-    app = app[i:]
-    x = app.index("\"")
-    uri = app[0:x]
-    if(len(uri)==0):
-        return
-    if(uri[0]!='/'):
-        domain+='/'
-    if (len(getHost(uri))==0):
-        return domain+uri
+def isvalid(url):
+    if(validators.domain(url) == True or validators.url(url)==True):
+        return True
     else:
-        return uri
+        return False
 
-def existKey(key,list_json):
-    for x in list_json:
-        if(x["key"]==html.escape(key)):
+
+def sendMail(recp,url):
+    parsed_url = urllib.parse.urlparse(url)
+    host = parsed_url.netloc
+    url = url.replace(".","[.]")
+    url = url.replace("https://","hxxps[:]//")
+    url = url.replace("http://","hxxp[:]//")
+    mail_content = "Hello,<br><br>This is to notify you of a phishing URL<br><br>Phishing URL to be taken down:  <strong>"+url+"</strong><br><br>"+getWhoisString(host)+"<br><br>Best regards,<br>Luca"
+    sender_address = sender_addr
+    sender_pass = sender_pa
+    receiver_address = recp
+    message = MIMEMultipart()
+    message['From'] = sender_address
+    message['To'] = receiver_address
+    message['Subject'] = 'WARNING PHISHING URL: '+url
+    message.attach(MIMEText(mail_content, 'html'))
+    session = smtplib.SMTP(smtp_server, smtp_port)
+    session.starttls()
+    session.login(sender_address, sender_pass)
+    text = message.as_string()
+    session.sendmail(sender_address, receiver_address, text)
+    session.quit()
+    print('Mail Sent to %s for %s' % (recp,url))
+
+def filetolist(path):
+	f = open(path)
+	final = set(f.read().split("\n"))
+	f.close()
+	return list(filter(None, final))
+
+def already(url):
+    l = filetolist(already_sign)
+    for x in l:
+        if (url == x):
             return True
     return False
-    
 
-class searchSpider(scrapy.Spider):
-    
-    urls=[]
-    splitchar = ""
-    string = ""
-    def __init__(self, *args, **kwargs):
-        super(searchSpider, self).__init__(*args, **kwargs)
-    name = "search"
-    le1 = LinkExtractor()
-    rules = (Rule(le1, callback='parse_item'))
-    sw = True
-    root = ""
-    list_json=[]
-    
-    def start_requests(self):
-        if (len(self.splitchar)==0):
-            print ("Sorry.. you must specify splitchar exit..")
-            time.sleep(3)
-            return
-            
-        urls=[]
-        r = open(self.file,'r')
-        for x in r:
-            if (not x.startswith("http")):
-                x = "http://"+x
-            if (len(x)-1=='\n'):
-                urls.append(x[0:len(x)-1])
-            else:
-                urls.append(x)
-        for url in urls:
-            self.root = getHost(url)
-            sw = True
-            yield scrapy.Request(url=url, callback=self.parse,cb_kwargs=dict(radix=self.root,switch=sw,list_json=self.list_json))
+def getEmails(url):
+    try:
+        parsed_url = urllib.parse.urlparse(url)
+        host = parsed_url.netloc
+        host = socket.gethostbyname(host)
+        obj = IPWhois(host)
+        res=obj.lookup_whois()
+    except Exception as err:
+        print("[KO] ==> Impossibile segnalare per %s" % url)
+        return "loopback"
+    a = res["nets"]
+    emails = []
+    definitive = ""
+    for x in a:
+        if(x["emails"]!="None"):
+            emails.append(x["emails"])
+    for k in emails:
+        try:
+            for j in k:
+                definitive+=j+";"
+        except Exception as err:
+            return;
+    return list(set(definitive[:-1].split(";")))
 
-    def parse(self, response,radix,switch,list_json):
-        try:
-            self.onlyscope
-        except Exception:
-            self.onlyscope = 'no'
-        try:
-            self.path
-        except Exception:
-            self.path = ''
-        if(len(self.path)>0):
-            self.path = validatepath(self.path)
-        if(switch):
-            switch = False
-            u = []
-            for k in self.le1.extract_links(response):
-                if(self.onlyscope.lower()=='yes'):
-                    if(radix not in k.url):
-                        continue
-                print(k.url)
-                u.append(k.url)
-            links = response.xpath("//a").extract()
-            for a in links:
-                ur = extractLink(response.url,a)
-                if ur is not None:
-                    if(self.onlyscope.lower()=='yes'):
-                        if(radix not in a):
-                            continue
-                    print(ur)
-                    if (ur not in u and len(ur)>0):
-                        u.append(ur)
-            for proc in u:
-                if (radix in getHost(proc)):
-                    switch = True
-                else:
-                    switch = False
-                yield scrapy.Request(url=proc, callback=self.parse,cb_kwargs=dict(radix=radix,switch=switch,list_json=list_json))
-        
-        list_string = self.string.split(self.splitchar)
-        for x in list_string:
-            if (len(x)==0):
-                continue
-            matched = searchforstring(response,x,response.url,str(response.css('title::text').get()))
-            if len(matched["matched"])>0:
-                if (existKey(x,list_json)==False):
-                    list_json.append({'key':html.escape(x),'matched':[matched]})
-                    writereport(list_json,self.path)
-                else:
-                    i = 0
-                    for k in list_json:
-                        if(k["key"]==x):
-                            list_json[i]["matched"].append(matched)
-                            break
-                        i+=1
-                    writereport(list_json,self.path)
+def signal():
+    while not queue_url.empty():
+        x = queue_url.get()
+        x=x.replace("\n","")
+        e = getEmails(x)
+        if(str(e)=="loopback" or str(e)=="None" ):
+            with open(error_sign, "a") as myfile:
+                if(str(e)=="None"):
+                    myfile.write(x+" ==> PROBLEMA: Indirizzo mail non trovato SOLUZIONE: Prova qui https://centralops.net/co/\n")
+                elif (str(e)=="loopback"):
+                    myfile.write(x+" ==> PROBLEMA: Loopback SOLUZIONE: Può capitare per dominio già abbattuto\n")
+            continue;
+        else:
+            for j in (e):
+                sendMail(j,x)
+            print("[OK] ==> Segnalazione effettuata per",x)
+            with open(already_sign, "a") as myfile:
+                myfile.write(x+"\n")
+
+print("Eseguo task")
+avvio()
+if (os.path.exists("File.txt")):
+    os.remove("File.txt")
+if (not os.path.exists(already_sign)):
+    check = False
+saveFile()
+print("Pulizia possibili valori duplicati in corso...")
+f = filetolist("File.txt")
+print("Sono state caricate in totale %s righe (duplicati non presenti). Verranno segnalate effettivamente: " % len(f),end="")
+for x in f:
+    if(not isvalid(x)):
+        continue
+    if(check):
+        if(not already(x)):
+            queue_url.put(x)
+    else:
+        queue_url.put(x)
+if(queue_url.qsize() == len(f)):
+    print(str(queue_url.qsize())+" url")
+else:
+    print(str(queue_url.qsize())+" url (tolte "+str(len(f)-queue_url.qsize())+" righe tra host non validi e url già segnalate)")
+time.sleep(5)
+for t in range(thread):
+    th = threading.Thread(target=signal())
+    th.start()
+while not queue_url.empty():
+    continue
+fine()
