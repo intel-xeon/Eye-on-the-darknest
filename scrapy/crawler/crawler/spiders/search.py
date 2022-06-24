@@ -35,31 +35,6 @@ def writereport(lista,path):
     temp.close()
     html.close()
 
-def validatepath(path):
-    app = path
-    if (os.path.isfile(path)):
-        path = os.path.dirname(filepath)+"/"
-    if (not path[len(path)-1]=='/'):
-        path+='/'
-        app = path
-    if (not os.path.isdir(path) and not path==''):
-        try:
-            os.makedirs(path)
-            print("path "+path+" are not present in file system.. created!")
-        except Exception:
-            if (os.access(path+"index.html",os.W_OK) and os.access(path+"result.json",os.W_OK)):
-                print("I can't write to "+path+" exit... \n path setted to project directory")
-                path= ""
-    if (not app==path):
-        if(len(path)>0):
-            print("Sorry.. but your path ("+app+") isn't availabe for permission problems.. i choose another path for you:",path)
-        else:
-            print("Sorry.. but your path ("+app+") isn't availabe for permission problems.. result will be saved into the project directory")
-        time.sleep(3)
-    return path
-    
-
-
 
 def searchforstring(response,string,url,title):
     element = ['a','abbr','acronym','address','applet','area','article','aside','audio','b','base','basefont','bdi','bdo','bgsound','big','blink','blockquote','body','br','button','canvas','caption','center','circle','cite','clipPath','code','col','colgroup','command','content','data','datalist','dd','defs','del','details','dfn','dialog','dir','div','dl','dt','element','ellipse','em','embed','fieldset','figcaption','figure','font','footer','foreignObject','form','frame','frameset','g','h1','h2','h3','h4','h5','h6','head','header','hgroup','hr','html','i','iframe','image','img','input','ins','isindex','kbd','keygen','label','legend','li','line','linearGradient','link','listing','main','map','mark','marquee','mask','math','menu','menuitem','meta','meter','multicol','nav','nextid','nobr','noembed','noframes','noscript','object','ol','optgroup','option','output','p','param','path','pattern','picture','plaintext','polygon','polyline','pre','progress','q','radialGradient','rb','rbc','rect','rp','rt','rtc','ruby','s','samp','script','section','select','shadow','slot','small','source','spacer','span','stop','strike','strong','style','sub','summary','sup','svg','table','tbody','td','template','text','textarea','tfoot','th','thead','time','title','tr','track','tspan','tt','u','ul','var','video','wbr','xmp']
@@ -161,8 +136,8 @@ class searchSpider(scrapy.Spider):
             self.path
         except Exception:
             self.path = ''
-        if(len(self.path)>0):
-            self.path = validatepath(self.path)
+        #if(len(self.path)>0):
+            #self.path = validatepath(self.path)
         if(switch):
             switch = False
             u = []
