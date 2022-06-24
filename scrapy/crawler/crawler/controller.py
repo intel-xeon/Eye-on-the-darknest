@@ -66,7 +66,7 @@ def validatepath(path):
 
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:],"htf:q:s:op:",["help","tor""file=","query=","splitter=","onlyscope","path="])
+    opts, args = getopt.getopt(sys.argv[1:],"htf:q:s:op:",["help","tor","file=","query=","splitter=","onlyscope","path="])
     if (not len(sys.argv[1:])):
         usage()
         exit()
