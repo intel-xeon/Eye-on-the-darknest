@@ -1,8 +1,20 @@
 import getopt,sys,os
+import socket
+import time
 
+def torEnabled():
+    s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    result = s.connect_ex(("127.0.0.1",9050))
+    if(result==0):
+        s.close()
+        return True
+    else:
+        s.close()
+        return False
+    
 
 def usage():
-    print("\n-h --help\t\tshow help\n-f --file\t\tset url file\n-q --query\t\tset your custom keyword(Example: \"String1/String2/String3/String4_part1*String4_part2/Stri ng5\")\n-s --splitter\t\tset a splitter char (Example: splitter=\"/\" make --query=\"string1/string2\" two different keyword)\n-o --onlyscope\t\tdoesn't search external link found in url scope\n-t --tor\t\ttraffic over tor network(Make sure you have tor installed with port 9050 open)\n-p --path\t\tPath where you want save your result (Example: -p /var/www/html)\n\nUsage example:\tpython3 controller.py -f url.txt -q \"String1/String2/String3/String4_part1*String4_part2/Stri ng5\" -s \"/\" -o -p /var/www/html \r\n")
+    print("\n\n-h --help\t\tshow help\n-f --file\t\tset url file\n-q --query\t\tset your custom keyword(Exaple: \"String1/String2/String3/String4_part1*String4_part2/Stri ng5\")\n-s --splitter\t\tset a splitter char (Example: splitter=\"/\" make --query=\"string1/string2\" two different keyword)\n-o --onlyscope\t\tdoesn't search external link found in url scope\n-t --tor\t\ttraffic over tor network(Make sure you have tor installed with port 9050 open)\n-p --path\t\tPath where you want save your result (Example: -p /var/www/html)\n\nUsage example:\tpython3 controller.py -f url.txt -q \"String1/String2/String3/String4_part1*String4_part2/Stri ng5\" -s \"/\" -o -p /var/www/html \r\n")
 arr = ["-f or --file","-q or --query","-s or --splitter","-p or --path"]
 tor = False
 banner = open("banner.txt",'r')
@@ -48,7 +60,23 @@ if(len(arr)>0):
         print("==>",x)
     exit()
 if(tor):
-    command="torify scrapy crawl search"+param
+    if(torEnabled()):
+        command="torify scrapy crawl search"+param
+    else:
+        r = input("Tor is not enabled. Do you want enable it? type 'y' for yes: ")
+        if(r.lower()=='y'):
+            print("Tryng to enable tor...")
+            os.system("/etc/init.d/tor start")
+            time.sleep(5)
+            if(torEnabled()):
+                print("Good news! Tor enabled!")
+                command="torify scrapy crawl search"+param
+            else:
+                print("Tor not availabe, exit..")
+                exit()
+        else:
+            print("Tor not availabe, exit..")
+            exit()
 else:
     command="scrapy crawl search"+param
 os.system(command)
