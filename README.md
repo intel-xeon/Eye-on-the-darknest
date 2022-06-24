@@ -1,3 +1,4 @@
+
 <a href="https://www.instagram.com/luke_fireeye_1996/
 " ><img src="https://img.shields.io/badge/@luke__fireeye__1996-Instragram-blue" /> </a><img src="https://img.shields.io/badge/Tested on Python-3.8%20%7C%203.10-00e600.svg" />
 <img src="https://img.shields.io/badge/dark%20web-clearnet-blue" />
@@ -5,10 +6,15 @@
 
 Eye on the darknest helps you find valuable information on the web. <br><br>Based on keyword search, it searches a set of urls for the keywords you want. For each url provided, Eye on the darknest searches for keywords recursively in the links in the same. 
 
+
 <h3> Install dependencies</h3>
 
 <pre class="notranslate">
 <code> pip3 install Scrapy</code>
+</pre>
+
+<pre class="notranslate">
+<code> apt-get install tor -y</code>
 </pre>
 
 <h3> preliminary steps </h3>
@@ -21,11 +27,18 @@ Eye on the darknest helps you find valuable information on the web. <br><br>Base
 <code>cd Eye-on-the-darknest/scrapy/crawler/crawler/</code>
 </pre>
 
+<h3>>_ CLI interface:</h3>
+
+![image](https://user-images.githubusercontent.com/37773731/175545199-d4534298-25b3-4548-956b-0f3e7c7a6f65.png)
+
+
+
+
 <h3> usage example (clearnet): </h3>
 
 
 <pre class="notranslate">
-<code>scrapy crawl search -a file=path/of/my/url.txt -a string="String1/String2/String3/String4_part1*String4_part2/Stri ng5" -a splitchar=/ -a onlyscope=yes -a path="/path/where/you/want/report"</code>
+<code>python3 controller.py --file url.txt --query "Jane" --splitter "/" --onlyscope --path /var/www/html/</code>
 </pre>
 
 result saved in "result.json"
@@ -46,7 +59,7 @@ result saved in "result.json"
 <code>netstat -plnt</code>
 </pre>
 <pre class="notranslate">
-<code>torify scrapy crawl search -a file=path/of/my/url.txt -a string="String1/String2/String3/String4_part1*String4_part2/Stri ng5" -a splitchar=/ -a onlyscope=yes -a path="/path/where/you/want/report"</code>
+<code>python3 controller.py --file url.txt --query "Jane" --splitter "/" --onlyscope --path /var/www/html/ <strong>--tor</strong></code>
 </pre>
 
 <h3> Recursive </h3>
