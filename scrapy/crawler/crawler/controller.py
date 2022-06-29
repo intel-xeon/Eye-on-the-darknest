@@ -58,7 +58,7 @@ def isvalidregexfield(maximum,splitter,string,regex,error):
 
 def usage():
     #print("\n\n-h --help\t\tshow help\n-f --file\t\tset url file\n-q --query\t\tset your custom keyword(Exaple: \"String1/String2/String3/String4_part1*String4_part2/Stri ng5\")\n-s --splitter\t\tset a splitter char (Example: splitter=\"/\" make --query=\"string1/string2\" two different keyword)\n-o --onlyscope\t\tdoesn't search external link found in url scope\n-t --tor\t\ttraffic over tor network(Make sure you have tor installed with port 9050 open)\n-p --path\t\tPath where you want save your result (Example: -p /var/www/html)\n\nUsage example:\tpython3 controller.py -f url.txt -q \"String1/String2/String3/String4_part1*String4_part2/Stri ng5\" -s \"/\" -o -p /var/www/html \r\n")
-    print("--generate-splitter\tGenerate a perfect splitter char \n\r\t\t\tUsage Example: --generate-splitter [YOUR_SEARCH_STRING_AND_REGEX] (concatenated without any splitter)\n\r\t\t\tExample of generation for words foo and foo2: --generate-splitter \"foofoo2\"")
+    print("--generatesplitter\tGenerate a perfect splitter char \n\r\t\t\tUsage Example: --generate-splitter [YOUR_SEARCH_STRING_AND_REGEX] (concatenated without any splitter)\n\r\t\t\tExample of generation for words foo and foo2: --generate-splitter \"foofoo2\"")
     print()
     print("-h --help\t\tshow help")
     print("-f --file\t\tset url file")
@@ -130,7 +130,7 @@ def validatepath(path):
 
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:],"htf:q:s:op:x:g:",["help","tor","file=","query=","splitter=","onlyscope","path=","regex=","generate-splitter="])
+    opts, args = getopt.getopt(sys.argv[1:],"htf:q:s:op:x:g:",["help","tor","file=","query=","splitter=","onlyscope","path=","regex=","generatesplitter="])
     if (not len(sys.argv[1:])):
         usage()
         exit()
@@ -142,7 +142,7 @@ try:
         if (o in ('-f','--file')):
             param+=" -a file="+a
             arr.remove("-f or --file")
-        elif (o in ('--generate-splitter')):
+        elif (o in ('--generatesplitter')):
             print("You can use this as splitter ==> "+generation(a))
             exit()
         elif (o in ('-q','--query')):
