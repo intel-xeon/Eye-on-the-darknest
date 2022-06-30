@@ -7,6 +7,8 @@ import unicodedata
 from scrapy.exporters import JsonItemExporter
 import html
 import os
+import re
+import w3lib.html
 
 def testmultiple(q,stringa):
     app = 0
@@ -36,27 +38,46 @@ def writereport(lista,path):
     html.close()
 
 
-def searchforstring(response,string,url,title):
+def matchregex(string,response):
+    result = []
+    r = response.css('body').get()
+    r = w3lib.html.remove_tags(r)
+    r = r.split("\n")
+    for x in r:
+        m = re.finditer(string,x)
+        for j in m:
+            j = html.escape(j.group())
+            j = unicodedata.normalize("NFKD", j)
+            result.append(j)
+    return result
+
+def searchforstring(response,string,url,title,regex,index):
     element = ['a','abbr','acronym','address','applet','area','article','aside','audio','b','base','basefont','bdi','bdo','bgsound','big','blink','blockquote','body','br','button','canvas','caption','center','circle','cite','clipPath','code','col','colgroup','command','content','data','datalist','dd','defs','del','details','dfn','dialog','dir','div','dl','dt','element','ellipse','em','embed','fieldset','figcaption','figure','font','footer','foreignObject','form','frame','frameset','g','h1','h2','h3','h4','h5','h6','head','header','hgroup','hr','html','i','iframe','image','img','input','ins','isindex','kbd','keygen','label','legend','li','line','linearGradient','link','listing','main','map','mark','marquee','mask','math','menu','menuitem','meta','meter','multicol','nav','nextid','nobr','noembed','noframes','noscript','object','ol','optgroup','option','output','p','param','path','pattern','picture','plaintext','polygon','polyline','pre','progress','q','radialGradient','rb','rbc','rect','rp','rt','rtc','ruby','s','samp','script','section','select','shadow','slot','small','source','spacer','span','stop','strike','strong','style','sub','summary','sup','svg','table','tbody','td','template','text','textarea','tfoot','th','thead','time','title','tr','track','tspan','tt','u','ul','var','video','wbr','xmp']
     match = []
     for e in element:
-        try:
+        try:            
             for x in response.xpath('//'+e+'/text()').extract():
-                if("*" in string):
-                    if(testmultiple(string.lower(),x.lower())):
-                        x = html.escape(x)
-                        x = unicodedata.normalize("NFKD", x) # serve per pulire carattere sporco \xa0
-                        match.append(x)
+                if (index not in regex):
+                    if("*" in string):
+                        if(testmultiple(string.lower(),x.lower())):
+                            x = html.escape(x)
+                            x = unicodedata.normalize("NFKD", x) # serve per pulire carattere sporco \xa0
+                            match.append(x)
+                    else:
+                        if(string.lower() in x.lower()):
+                            x = html.escape(x)
+                            x = unicodedata.normalize("NFKD", x) # serve per pulire carattere sporco \xa0
+                            match.append(x)
                 else:
-                    if(string.lower() in x.lower()):
-                        x = html.escape(x)
-                        x = unicodedata.normalize("NFKD", x) # serve per pulire carattere sporco \xa0
+                    #stringa = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])"
+                    result = matchregex(string,response)
+                    for x in result:
                         match.append(x)
         except Exception:
             continue
         if (len(match)==0):
             continue
-    
+    match = list(set(match))
     return {"url":url,"title":html.escape(title),"matched":match}
 
 def getHost(url):
@@ -112,7 +133,10 @@ class searchSpider(scrapy.Spider):
             print ("Sorry.. you must specify splitchar exit..")
             time.sleep(3)
             return
-            
+        try:
+            self.regex = self.regex.split(",")
+        except Exception:
+            self.regex = [-1]
         urls=[]
         r = open(self.file,'r')
         for x in r:
@@ -125,9 +149,9 @@ class searchSpider(scrapy.Spider):
         for url in urls:
             self.root = getHost(url)
             sw = True
-            yield scrapy.Request(url=url, callback=self.parse,cb_kwargs=dict(radix=self.root,switch=sw,list_json=self.list_json))
+            yield scrapy.Request(url=url, callback=self.parse,cb_kwargs=dict(radix=self.root,switch=sw,list_json=self.list_json,regex=self.regex))
 
-    def parse(self, response,radix,switch,list_json):
+    def parse(self, response,radix,switch,list_json,regex):
         try:
             self.onlyscope
         except Exception:
@@ -162,13 +186,15 @@ class searchSpider(scrapy.Spider):
                     switch = True
                 else:
                     switch = False
-                yield scrapy.Request(url=proc, callback=self.parse,cb_kwargs=dict(radix=radix,switch=switch,list_json=list_json))
+                yield scrapy.Request(url=proc, callback=self.parse,cb_kwargs=dict(radix=radix,switch=switch,list_json=list_json,regex=regex))
         
         list_string = self.string.split(self.splitchar)
+        h = 0
         for x in list_string:
+            h+=1
             if (len(x)==0):
                 continue
-            matched = searchforstring(response,x,response.url,str(response.css('title::text').get()))
+            matched = searchforstring(response,x,response.url,str(response.css('title::text').get()),regex,str(h))
             if len(matched["matched"])>0:
                 if (existKey(x,list_json)==False):
                     list_json.append({'key':html.escape(x),'matched':[matched]})
