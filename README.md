@@ -29,9 +29,13 @@ Eye on the darknest helps you find valuable information on the web. <br><br>Base
 
 <h3>>_ CLI interface:</h3>
 
-![image](https://user-images.githubusercontent.com/37773731/175545199-d4534298-25b3-4548-956b-0f3e7c7a6f65.png)
+![image](https://user-images.githubusercontent.com/37773731/177152604-67b5b833-8ab7-4e69-8ca6-582f115b6f5d.png)
 
+<h3>Templates:</h3>
 
+Use proposed default templates or create your own!
+
+![image](https://user-images.githubusercontent.com/37773731/177153017-ad399aaf-dccc-4608-8cf0-84a0d6988ac6.png)
 
 
 <h3> usage example (clearnet): </h3>
@@ -60,6 +64,28 @@ result saved in "result.json"
 </pre>
 <pre class="notranslate">
 <code>python3 controller.py --file url.txt --query "Jane" --splitter "/" --onlyscope --path /var/www/html/ <strong>--tor</strong></code>
+</pre>
+
+<h3> usage example with templates: </h3>
+
+To see the available templates type:
+
+<pre class="notranslate">
+<code>python3 controller.py -l</code>
+</pre>
+
+![image](https://user-images.githubusercontent.com/37773731/177153017-ad399aaf-dccc-4608-8cf0-84a0d6988ac6.png)
+
+Search for IPv4 and email example:
+<pre class="notranslate">
+<code>python3 controller.py --file url.txt -z 1,6 --path /var/www/html</code>
+</pre>
+
+<h3> usage example (RegEx): </h3>
+
+
+<pre class="notranslate">
+<code>python3 controller.py --file url.txt --query "[YOUR_REGEX_1]@@[YOUR_REGEX_2]" --splitter "@@" --onlyscope --path /var/www/html/ -x 1,2</code>
 </pre>
 
 <h3> Recursive </h3>
