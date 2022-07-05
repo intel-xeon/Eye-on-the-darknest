@@ -1,0 +1,83 @@
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script>
+function format(d) {
+	data="";
+	for (let i=0;i<d.matched.length;i++){
+	data+='<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
+        '<tr>' +
+        '<td>URL:</td>' +
+        '<td>' +
+        d.matched[i].url +
+        '</td>' +
+        '</tr>' +
+		'<tr>' +
+        '<td>Title:</td>' +
+        '<td>' +
+        d.matched[i].title+
+        '</td>' +
+        '</tr>' +
+        '<tr>' +
+        '<td>Match:</td>' +
+        '<td>' +
+        d.matched[i].matched.toString().replaceAll(d.key,"<strong>"+d.key+"</strong>") +
+        '</td>' +
+        '</tr>' +
+		
+        '</table><br><br><br>';
+	}
+	return data;
+       }
+$(document).ready(function () {
+    var table = $('#result_table').DataTable({
+        ajax: 'result.json',
+        columns: [
+            {
+                className: 'dt-control',
+                orderable: false,
+                data: null,
+                defaultContent: '',
+            },
+            { data: 'key' },
+        ],
+        order: [[1, 'asc']],
+	language: {
+        searchPlaceholder: "Search for a keyword.."
+    }
+    });
+    $('#result_table tbody').on('click', 'td.dt-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row(tr);
+ 
+        if (row.child.isShown()) {
+            row.child.hide();
+            tr.removeClass('shown');
+        } else {
+            row.child(format(row.data())).show();
+            tr.addClass('shown');
+        }
+    });
+});
+</script>
+<div class="container">
+<h2>Eye on the darknest table:</h2>
+<p>here you can monitor the progress of your research</p>
+<table id="result_table" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Keyword</th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th></th>
+                <th>Keyword</th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
