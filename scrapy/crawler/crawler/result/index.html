@@ -1,3 +1,5 @@
+
+
 <html lang="en"><head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -5,31 +7,39 @@
     <meta name="generator" content="Hugo 0.98.0">
     <title>Eye on the darknest</title>
     <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/pricing/">
-<link rel="stylesheet" href="https://getbootstrap.com/docs/5.2/dist/css/bootstrap.min.css" >
-<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" >
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css">
+
+
+
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
+
+
 <script>
+
+
 function format(d) {
 	console.log(JSON.stringify(d))
     data="";
 	for (let i=0;i<d.matched.length;i++){
 	data+='<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
         '<tr>' +
-        '<td>URL:</td>' +
-        '<td>' +
+        '<td style="border: none;">URL:</td>' +
+        '<td style="border: none;">' +
         d.matched[i].url +
         '</td>' +
         '</tr>' +
 		'<tr>' +
-        '<td>Title:</td>' +
-        '<td>' +
+        '<td style="border: none;">Title:</td>' +
+        '<td style="border: none;">' +
         d.matched[i].title+
         '</td>' +
         '</tr>' +
         '<tr>' +
-        '<td>Match:</td>' +
-        '<td>' +
+        '<td style="border: none;">Match:</td>' +
+        '<td style="border: none;">' +
         d.matched[i].matched.toString().replaceAll(d.key,"<strong>"+d.key+"</strong>") +
         '</td>' +
         '</tr>' +
@@ -155,7 +165,7 @@ $(document).ready(function () {
 </p>    
     </div>
   </header>
-  <table id="result_table" class="display" style="width:100%">
+  <table id="result_table" class="table table-striped table-bordered" style="width:100%">
         <thead>
             <tr>
                 <th></th>
@@ -171,3 +181,4 @@ $(document).ready(function () {
     </table>
 </div>
 </body></html>
+
