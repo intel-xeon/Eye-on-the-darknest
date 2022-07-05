@@ -137,7 +137,7 @@ for (let i=0;i<Object.keys(data.data).length;i++){
 const element = document.getElementById("body");
 element.appendChild(para);
 d = document.getElementById("descrip")
-d.innerHTML= "I detected "+url_count+" URLs and "+match_count+" matches"
+d.innerHTML= "I detected on "+url_count+" URLs "+match_count+" matches"
 }
 xhttp.open("GET", "result.json?temp="+ new Date().getTime());
 xhttp.send();
