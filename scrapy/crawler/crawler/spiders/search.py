@@ -22,6 +22,8 @@ def testmultiple(q,stringa):
             return False
     return True
 
+
+
 def writereport(lista,path):
     w = "{\"data\":["
     for x in lista:
@@ -34,6 +36,14 @@ def writereport(lista,path):
     html = open(path+"index.html","w")
     f = open(path+"result.json", "w")
     html.write(temp.read())
+    temp = open("result/other.html",'r')
+    html = open(path+"other.html","w")
+    html.write(temp.read())
+    temp = open("result/filter.html",'r')
+    html = open(path+"filter.html","w")
+    html.write(temp.read())
+    w = json.loads(w)
+    w = json.dumps(w, indent=4, sort_keys=True)
     f.write(str(w))
     f.close()
     temp.close()
