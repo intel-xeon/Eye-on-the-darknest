@@ -1,20 +1,18 @@
-<html lang="en"><head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="generator" content="Hugo 0.98.0">
-    <title>Eye on the darknest</title>
-    <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/pricing/">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="Luca Marsilia">
+<meta name="generator" content="Hugo 0.98.0">
+<title>Eye on the darknest</title>
+<link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/pricing/">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" >
 <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.bootstrap5.min.css">
-
-
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
-
-
 <script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
@@ -23,8 +21,6 @@
 <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.bootstrap5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.colVis.min.js"></script>
-
-
 
 
 <script>
@@ -98,12 +94,14 @@ for (let i=0;i<Object.keys(data.data).length;i++){
         .addClass('filters')
         .appendTo('#table_bootstrap thead');
  
-    table = $('#table_bootstrap').DataTable({
-	    dom: 'Bfrtip',
-        buttons: [
-            'copy', 'csv', 'excel', 'pdf', 'print', 'colvis'
-        ],
-		searching: false,
+   table = $('#table_bootstrap').DataTable({
+    language: {
+        searchPlaceholder: "Global search"
+    },
+    dom: 'Bfrtip',
+      buttons: [
+          'copy', 'csv', 'excel', 'pdf', 'print', 'colvis'
+      ],
         orderCellsTop: true,
         fixedHeader: true,
         initComplete: function () {
@@ -238,14 +236,11 @@ xhttp.send();
     </div>
 
     <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
-      <h1 class="display-4 fw-normal">Result table</h1>
+<h2 class="display-6 text-center mb-4">Data search</h2>
       <p class="fs-5 text-muted">here you can monitor the progress of your research
 </p><br><br>
-<h2 class="display-6 text-center mb-4">Filter</h2>
     </div>
-    
   </header>
-  
   <div class="container">
     <form>
       <div class="row">
@@ -254,7 +249,6 @@ xhttp.send();
       </div>
       </div>
       </form>
-  
 <table id="table_bootstrap" class="table table-striped table-hover">
   <thead class="thead-dark">
       
