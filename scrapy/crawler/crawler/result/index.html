@@ -9,7 +9,7 @@
     <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/pricing/">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" >
 <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/dataTables.bootstrap5.min.css">
-
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.bootstrap5.min.css">
 
 
 <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
@@ -17,66 +17,145 @@
 <script src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap5.min.js"></script>
 
 
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.colVis.min.js"></script>
+
+
+
+
 <script>
 
+$(document).ready(function(){
 
-function format(d) {
-	console.log(JSON.stringify(d))
-    data="";
-	for (let i=0;i<d.matched.length;i++){
-	data+='<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
-        '<tr>' +
-        '<td style="border: none;">URL:</td>' +
-        '<td style="border: none;">' +
-        d.matched[i].url +
-        '</td>' +
-        '</tr>' +
-		'<tr>' +
-        '<td style="border: none;">Title:</td>' +
-        '<td style="border: none;">' +
-        d.matched[i].title+
-        '</td>' +
-        '</tr>' +
-        '<tr>' +
-        '<td style="border: none;">Match:</td>' +
-        '<td style="border: none;">' +
-        d.matched[i].matched.toString().replaceAll(d.key,"<strong>"+d.key+"</strong>") +
-        '</td>' +
-        '</tr>' +
-		
-        '</table><br><br><br>';
-	}
-	return data;
-       }
-$(document).ready(function () {
-    var table = $('#result_table').DataTable({
-        ajax: 'result.json',
-        columns: [
-            {
-                className: 'dt-control',
-                orderable: false,
-                data: null,
-                defaultContent: '',
-            },
-            { data: 'key' },
-        ],
-        order: [[1, 'asc']],
-	language: {
-        searchPlaceholder: "Search for a keyword.."
+const xhttp = new XMLHttpRequest();
+xhttp.onload = function() {
+data = JSON.parse(this.responseText);
+$("#fil_key").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#table tr").filter(function() {
+      filter = $(this).find("td:eq(0)").text().toLowerCase()
+      $(this).toggle(filter.indexOf(value) > -1)
+    });
+  });
+  $("#fil_url").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#table tr").filter(function() {
+      filter = $(this).find("td:eq(1)").text().toLowerCase()
+      $(this).toggle(filter.indexOf(value) > -1)
+    });
+  });
+  
+  
+  $("#fil_title").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#table tr").filter(function() {
+      filter = $(this).find("td:eq(2)").text().toLowerCase()
+      $(this).toggle(filter.indexOf(value) > -1)
+    });
+  });
+  
+      $("#fil_match").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#table tr").filter(function() {
+      filter = $(this).find("td:eq(3)").text().toLowerCase()
+      $(this).toggle(filter.indexOf(value) > -1)
+    });
+  });
+   
+  const table = document.getElementById("table");
+  num = 0
+for (let i=0;i<Object.keys(data.data).length;i++){
+    for (let j=0;j<Object.keys(data.data[i].matched).length;j++){
+    for (let x=0;x<Object.keys(data.data[i].matched[j].matched).length;x++){
+    row = document.createElement("tr");
+    url = document.createElement("td");
+	key = document.createElement("td");
+    title = document.createElement("td");
+    match = document.createElement("td");
+    url.classList.add("col-sm-3")
+    key.classList.add("col-sm-3")
+    title.classList.add("col-sm-3")
+    match.classList.add("col-sm-3")
+    url.innerHTML = data.data[i].matched[j].url
+    key.innerHTML = data.data[i].key
+    title.innerHTML = data.data[i].matched[j].title
+    match.innerHTML = data.data[i].matched[j].matched[x]
+    row.appendChild(key);
+    row.appendChild(url);
+    row.appendChild(title);
+    row.appendChild(match);
+    table.appendChild(row)
     }
-    });
-    $('#result_table tbody').on('click', 'td.dt-control', function () {
-        var tr = $(this).closest('tr');
-        var row = table.row(tr);
+}
+}
+//$(document).ready(function () {
+    $('#table_bootstrap thead tr')
+        .clone(true)
+        .addClass('filters')
+        .appendTo('#table_bootstrap thead');
  
-        if (row.child.isShown()) {
-            row.child.hide();
-            tr.removeClass('shown');
-        } else {
-            row.child(format(row.data())).show();
-            tr.addClass('shown');
-        }
+    table = $('#table_bootstrap').DataTable({
+	    dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print', 'colvis'
+        ],
+		searching: false,
+        orderCellsTop: true,
+        fixedHeader: true,
+        initComplete: function () {
+            var api = this.api();
+            api
+                .columns()
+                .eq(0)
+                .each(function (colIdx) {
+                    var cell = $('.filters th').eq(
+                        $(api.column(colIdx).header()).index()
+                    );
+                    var title = $(cell).text();
+                    $(cell).html('<input type="text" class="form-control" placeholder="' + title + '" />');
+                    $(
+                        'input',
+                        $('.filters th').eq($(api.column(colIdx).header()).index())
+                    )
+                        .off('keyup change')
+                        .on('change', function (e) {
+                            // Get the search value
+                            $(this).attr('title', $(this).val());
+                            var regexr = '({search})';
+                            var cursorPosition = this.selectionStart;
+                            api
+                                .column(colIdx)
+                                .search(
+                                    this.value != ''
+                                        ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                        : '',
+                                    this.value != '',
+                                    this.value == ''
+                                )
+                                .draw();
+                        })
+                        .on('keyup', function (e) {
+                            e.stopPropagation();
+ 
+                            $(this).trigger('change');
+                            $(this)
+                                .focus()[0]
+                                .setSelectionRange(cursorPosition, cursorPosition);
+                        });
+                });
+        },
     });
+  $('.dataTables_length').addClass('bs-select');
+//});
+}
+xhttp.open("GET", "result.json?temp="+ new Date().getTime());
+xhttp.send();  
 });
 </script>
 <meta name="theme-color" content="#712cf9">
@@ -154,32 +233,43 @@ $(document).ready(function () {
         <a class="me-3 py-2 text-dark text-decoration-none" href="https://www.instagram.com/accounts/login/?next=/luke_fireeye_1996/">About author</a>
         <a class="me-3 py-2 text-dark text-decoration-none" href="result.json">Feed</a>
         <a class="me-3 py-2 text-dark text-decoration-none" href="javascript:location.reload(true);" >Update result</a>
-	<a class="me-3 py-2 text-dark text-decoration-none" href="index.html">Default view</a>	      
-        <a class="me-3 py-2 text-dark text-decoration-none" href="other.html">Schematic view</a>  
-        <a class="me-3 py-2 text-dark text-decoration-none" href="filter.html">Filter view</a>          
+        <a class="me-3 py-2 text-dark text-decoration-none" href="other.html">Schematic View</a>  
+        <a class="me-3 py-2 text-dark text-decoration-none" href="filter.html">Filter View</a>  
+        
       </nav>
     </div>
 
     <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
       <h1 class="display-4 fw-normal">Result table</h1>
       <p class="fs-5 text-muted">here you can monitor the progress of your research
-</p>    
+</p><br><br>
+<h2 class="display-6 text-center mb-4">Filter</h2>
     </div>
+    
   </header>
-  <table id="result_table" class="table table-striped table-bordered" style="width:100%">
-        <thead>
-            <tr>
-                <th></th>
-                <th>Keyword</th>
-            </tr>
-        </thead>
-        <tfoot>
-            <tr>
-                <th></th>
-                <th>Keyword</th>
-            </tr>
-        </tfoot>
-    </table>
+  
+  <div class="container">
+    <form>
+      <div class="row">
+      <div class="col-sm-12">
+      <input class="form-control" type="hidden"/> 
+      </div>
+      </div>
+      </form>
+  
+<table id="table_bootstrap" class="table table-striped table-hover">
+  <thead class="thead-dark">
+      
+    <tr>
+      <th scope="col">Key</th>
+      <th scope="col">URL</th>
+      <th scope="col">Title</th>
+      <th scope="col">Match</th>
+    </tr>
+  </thead>
+  <tbody id="table">
+  </tbody>
+</table>
 </div>
+  </div><br><br><br><br><br><br>
 </body></html>
-
