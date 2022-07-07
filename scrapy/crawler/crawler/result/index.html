@@ -1,5 +1,4 @@
-<html lang="en">
-<head>
+<html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="">
@@ -26,7 +25,6 @@
 <script>
 
 $(document).ready(function(){
-
 const xhttp = new XMLHttpRequest();
 xhttp.onload = function() {
 data = JSON.parse(this.responseText);
@@ -63,10 +61,17 @@ $("#fil_key").on("keyup", function() {
   });
    
   const table = document.getElementById("table");
-  num = 0
+  url_count = 0
+  match_count = 0
+  urarr = []
 for (let i=0;i<Object.keys(data.data).length;i++){
     for (let j=0;j<Object.keys(data.data[i].matched).length;j++){
+	if(!urarr.includes(data.data[i].matched[j].url)){
+	url_count++
+	urarr.push(data.data[i].matched[j].url)
+	}
     for (let x=0;x<Object.keys(data.data[i].matched[j].matched).length;x++){
+	match_count++
     row = document.createElement("tr");
     url = document.createElement("td");
 	key = document.createElement("td");
@@ -88,6 +93,9 @@ for (let i=0;i<Object.keys(data.data).length;i++){
     }
 }
 }
+d = document.getElementById("stat")
+d.innerHTML = "I detected on "+url_count+" distinct URLs "+match_count+" matches";
+urarr = []
 //$(document).ready(function () {
     $('#table_bootstrap thead tr')
         .clone(true)
@@ -226,19 +234,16 @@ xhttp.send();
       </a>
       <nav class="d-inline-flex mt-2 mt-md-0 ms-md-auto">
         <a class="me-3 py-2 text-dark text-decoration-none" href="https://github.com/intel-xeon/Eye-on-the-darknest/">Eye on the Darknest</a>
-        <a class="me-3 py-2 text-dark text-decoration-none" href="https://www.instagram.com/accounts/login/?next=/luke_fireeye_1996/">About author</a>
+        <a class="me-3 py-2 text-dark text-decoration-none" href="https://www.instagram.com/accounts/login/?next=/luke_fireeye_1996/">Author</a>
         <a class="me-3 py-2 text-dark text-decoration-none" href="result.json">Feed</a>
         <a class="me-3 py-2 text-dark text-decoration-none" href="javascript:location.reload(true);" >Update result</a>
-        <a class="me-3 py-2 text-dark text-decoration-none" href="other.html">Schematic View</a>  
-        <a class="me-3 py-2 text-dark text-decoration-none" href="filter.html">Filter View</a>  
-        
+        <a class="me-3 py-2 text-dark text-decoration-none" href="other.html">Schematic View</a>
       </nav>
     </div>
-
     <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
 <h2 class="display-6 text-center mb-4">Data search</h2>
-      <p class="fs-5 text-muted">here you can monitor the progress of your research
-</p><br><br>
+      <p class="fs-5 text-muted" id="stat"></p>
+<br><br>
     </div>
   </header>
   <div class="container">
