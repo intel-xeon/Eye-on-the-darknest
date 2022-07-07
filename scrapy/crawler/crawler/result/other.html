@@ -85,9 +85,7 @@
         <a class="me-3 py-2 text-dark text-decoration-none" href="https://www.instagram.com/accounts/login/?next=/luke_fireeye_1996/">About author</a>
         <a class="me-3 py-2 text-dark text-decoration-none" href="result.json">Feed</a>
         <a class="me-3 py-2 text-dark text-decoration-none" href="javascript:location.reload(true);" >Update result</a>
-	<a class="me-3 py-2 text-dark text-decoration-none" href="index.html">Default view</a>
-        <a class="me-3 py-2 text-dark text-decoration-none" href="other.html">Schematic view</a>  
-        <a class="me-3 py-2 text-dark text-decoration-none" href="filter.html">Filter view</a>    
+        <a class="me-3 py-2 text-dark text-decoration-none" href="index.html">Principal View</a>  
       </nav>
     </div>
     <div class="pricing-header p-3 pb-md-4 mx-auto text-center">
@@ -106,6 +104,7 @@
 <script>
 url_count = 0
 match_count = 0
+arr_url = []
 const xhttp = new XMLHttpRequest();
 xhttp.onload = function() {
   data = JSON.parse(this.responseText);
@@ -124,7 +123,10 @@ for (let i=0;i<Object.keys(data.data).length;i++){
     const para2 = document.createElement("ul");
 	node1 = document.createElement("li");
     node1.innerHTML = data.data[i].matched[j].url
+	if(!arr_url.includes(data.data[i].matched[j].url)){
 	url_count++
+	arr_url.push(data.data[i].matched[j].url)
+	}
     para1.appendChild(node1);
     for (let x=0;x<Object.keys(data.data[i].matched[j].matched).length;x++){
     node2 = document.createElement("li");
@@ -139,7 +141,7 @@ for (let i=0;i<Object.keys(data.data).length;i++){
 const element = document.getElementById("body");
 element.appendChild(para);
 d = document.getElementById("descrip")
-d.innerHTML= "I detected on "+url_count+" URLs "+match_count+" matches"
+d.innerHTML= "I detected on "+url_count+" distinct URLs "+match_count+" matches"
 }
 xhttp.open("GET", "result.json?temp="+ new Date().getTime());
 xhttp.send();
