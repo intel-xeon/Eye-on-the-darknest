@@ -1,3 +1,5 @@
+
+
 <html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -107,8 +109,12 @@ urarr = []
         searchPlaceholder: "Global search"
     },
     dom: 'Bfrtip',
+	lengthMenu: [
+            [ 10, 25, 50,100, -1 ],
+            [ '10 rows', '25 rows', '50 rows', '100 rows', 'Show all' ]
+        ],
       buttons: [
-          'copy', 'csv', 'excel', 'pdf', 'print', 'colvis'
+          'pageLength','copy', 'csv', 'excel', 'pdf', 'print', 'colvis'
       ],
         orderCellsTop: true,
         fixedHeader: true,
