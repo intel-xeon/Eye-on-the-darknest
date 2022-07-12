@@ -102,7 +102,7 @@ Import data where and how you want thanks to export in JSON format
 
 <h3>Generate automated HTML datatable of your keywords</h3>
 
-![image](https://user-images.githubusercontent.com/37773731/178494632-1284c825-9d33-41b7-9103-64b7fb6527df.png)
+![image](https://user-images.githubusercontent.com/37773731/178496577-785c2c1b-dc91-45e5-9add-94852f57e4a1.png)
 
 <h3>you can find lists of .onion sites here:</h3>
 
