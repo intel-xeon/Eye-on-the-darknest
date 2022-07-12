@@ -35,8 +35,7 @@ Eye on the darknest helps you find valuable information on the web. <br><br>Base
 
 Use proposed default templates or create your own!
 
-![image](https://user-images.githubusercontent.com/37773731/177153017-ad399aaf-dccc-4608-8cf0-84a0d6988ac6.png)
-
+![image](https://user-images.githubusercontent.com/37773731/178488222-89eaff13-e669-451e-a7d8-6235319198fa.png)
 
 <h3> usage example (clearnet): </h3>
 
@@ -74,7 +73,7 @@ To see the available templates type:
 <code>python3 controller.py -l</code>
 </pre>
 
-![image](https://user-images.githubusercontent.com/37773731/177153017-ad399aaf-dccc-4608-8cf0-84a0d6988ac6.png)
+![image](https://user-images.githubusercontent.com/37773731/178488222-89eaff13-e669-451e-a7d8-6235319198fa.png)
 
 Search for IPv4 and email example:
 <pre class="notranslate">
