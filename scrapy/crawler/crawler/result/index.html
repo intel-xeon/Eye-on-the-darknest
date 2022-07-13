@@ -1,9 +1,9 @@
+
 <html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="">
 <meta name="author" content="Luca Marsilia">
-<meta name="generator" content="Hugo 0.98.0">
 <title>Eye on the darknest</title>
 <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/pricing/">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" >
@@ -23,6 +23,11 @@
 
 
 <script>
+var getLocation = function(href) {
+    var l = document.createElement("a");
+    l.href = href;
+    return l.hostname;
+};
 
 $(document).ready(function(){
 const xhttp = new XMLHttpRequest();
@@ -74,19 +79,23 @@ for (let i=0;i<Object.keys(data.data).length;i++){
 	match_count++
     row = document.createElement("tr");
     url = document.createElement("td");
+    hostname = document.createElement("td");
 	key = document.createElement("td");
     title = document.createElement("td");
     match = document.createElement("td");
-    url.classList.add("col-sm-3")
-    key.classList.add("col-sm-3")
-    title.classList.add("col-sm-3")
-    match.classList.add("col-sm-3")
+    url.classList.add("text-break")
+    hostname.classList.add("text-break")
+    key.classList.add("text-break")
+    title.classList.add("text-break")
+    match.classList.add("text-break")
     url.innerHTML = data.data[i].matched[j].url
+    hostname.innerHTML = getLocation(data.data[i].matched[j].url)
     key.innerHTML = data.data[i].key
     title.innerHTML = data.data[i].matched[j].title
     match.innerHTML = data.data[i].matched[j].matched[x]
     row.appendChild(key);
     row.appendChild(url);
+    row.appendChild(hostname);
     row.appendChild(title);
     row.appendChild(match);
     table.appendChild(row)
@@ -261,13 +270,11 @@ xhttp.send();
 <table id="table_bootstrap" class="table table-striped table-hover">
   <thead>
     <tr>
-      <th scope="col"><button type="button" class="btn btn-outline-primary col-sm-12">Key</button></th>
-      <th scope="col"><button type="button" class="btn btn-outline-primary col-sm-12">URL</button></th>
-      <th scope="col"><button type="button" class="btn btn-outline-primary col-sm-12">Title</button></th>
-      <th scope="col"><button type="button" class="btn btn-outline-primary col-sm-12">Match</button></th>
-      <!-- <th scope="col">URL</th> -->
-      <!-- <th scope="col">Title</th> -->
-      <!-- <th scope="col">Match</th> -->
+      <th scope="col"><button type="button" class="btn btn-outline-primary col-sm-12 d-flex justify-content-center">Key</button></th>
+      <th scope="col"><button type="button" class="btn btn-outline-primary col-sm-12 d-flex justify-content-center">URL</button></th>
+      <th scope="col"><button type="button" class="btn btn-outline-primary col-sm-12 d-flex justify-content-center">Hostname</button></th>
+      <th scope="col"><button type="button" class="btn btn-outline-primary col-sm-12 d-flex justify-content-center">Title</button></th>
+      <th scope="col"><button type="button" class="btn btn-outline-primary col-sm-12 d-flex justify-content-center">Match</button></th>
     </tr>
   </thead>
   <tbody id="table">
@@ -275,4 +282,5 @@ xhttp.send();
 </table>
 </div>
   </div><br><br><br><br><br><br>
-</body></html>
+</body>
+</html>
