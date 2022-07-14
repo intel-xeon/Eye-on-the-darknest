@@ -1,4 +1,3 @@
-
 <html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -69,6 +68,7 @@ $("#fil_key").on("keyup", function() {
   url_count = 0
   match_count = 0
   urarr = []
+  
 for (let i=0;i<Object.keys(data.data).length;i++){
     for (let j=0;j<Object.keys(data.data[i].matched).length;j++){
 	if(!urarr.includes(data.data[i].matched[j].url)){
@@ -102,6 +102,7 @@ for (let i=0;i<Object.keys(data.data).length;i++){
     }
 }
 }
+$("#loading_butt").hide();
 d = document.getElementById("stat")
 d.innerHTML = "I detected on "+url_count+" distinct URLs "+match_count+" matches";
 urarr = []
@@ -117,11 +118,11 @@ urarr = []
     },
     dom: 'Bfrtip',
 	lengthMenu: [
-            [ 10, 25, 50,100, -1 ],
-            [ '10 rows', '25 rows', '50 rows', '100 rows', 'Show all' ]
+            [ 5,10, 25, 50,100, -1 ],
+            [ '5 rows','10 rows', '25 rows', '50 rows', '100 rows', 'Show all' ]
         ],
       buttons: [
-          'pageLength','copy', 'csv', 'excel', 'pdf', 'print', 'colvis'
+          'pageLength','copy', 'csv', 'excel', 'colvis'
       ],
         orderCellsTop: true,
         fixedHeader: true,
@@ -135,7 +136,7 @@ urarr = []
                         $(api.column(colIdx).header()).index()
                     );
                     var title = $(cell).text();
-                    $(cell).html('<input type="text" class="form-control" placeholder="' + title + '" />');
+                    $(cell).html('<input type="text" class="form-control col-sm-4 rounded-pill" placeholder="' + title + '" />');
                     $(
                         'input',
                         $('.filters th').eq($(api.column(colIdx).header()).index())
@@ -262,19 +263,30 @@ xhttp.send();
   <div class="container">
     <form>
       <div class="row">
-      <div class="col-sm-12">
-      <input class="form-control" type="hidden"/> 
+	  
+      <div align="center" class="col-sm-12">
+      <!-- <input class="form-control" type="hidden"/>  -->
+	  
+	  <button id="loading_butt" class="btn btn-primary">
+  <span class="spinner-border spinner-border-sm"></span>
+  Loading..
+</button>
+	  
+	  
+	  
+	  
+	  
       </div>
       </div>
       </form>
-<table id="table_bootstrap" class="table table-striped table-hover">
+<table id="table_bootstrap" class="table table-striped table-hover table-responsive">
   <thead>
     <tr>
-      <th scope="col"><button type="button" class="btn btn-outline-primary col-sm-12 d-flex justify-content-center">Key</button></th>
-      <th scope="col"><button type="button" class="btn btn-outline-primary col-sm-12 d-flex justify-content-center">URL</button></th>
-      <th scope="col"><button type="button" class="btn btn-outline-primary col-sm-12 d-flex justify-content-center">Hostname</button></th>
-      <th scope="col"><button type="button" class="btn btn-outline-primary col-sm-12 d-flex justify-content-center">Title</button></th>
-      <th scope="col"><button type="button" class="btn btn-outline-primary col-sm-12 d-flex justify-content-center">Match</button></th>
+      <th scope="col"><button type="button" class="btn btn-outline-primary col-sm-12 d-flex justify-content-center rounded-pill">Key</button></th>
+      <th scope="col"><button type="button" class="btn btn-outline-primary col-sm-12 d-flex justify-content-center rounded-pill">URL</button></th>
+      <th scope="col"><button type="button" class="btn btn-outline-primary col-sm-12 d-flex justify-content-center rounded-pill">Hostname</button></th>
+      <th scope="col"><button type="button" class="btn btn-outline-primary col-sm-12 d-flex justify-content-center rounded-pill">Title</button></th>
+      <th scope="col"><button type="button" class="btn btn-outline-primary col-sm-12 d-flex justify-content-center rounded-pill">Match</button></th>
     </tr>
   </thead>
   <tbody id="table">
@@ -284,3 +296,5 @@ xhttp.send();
   </div><br><br><br><br><br><br>
 </body>
 </html>
+
+
