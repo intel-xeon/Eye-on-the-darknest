@@ -44,7 +44,7 @@ Use proposed default templates or create your own!
 <code>python3 controller.py --file url.txt --query "Jane" --splitter "/" --onlyscope --path /var/www/html/</code>
 </pre>
 
-result saved in "result.json"
+report generated in /var/www/html/
 
 
 <h3> usage example (dark web): </h3>
