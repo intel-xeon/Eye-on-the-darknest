@@ -89,6 +89,13 @@ Search for IPv4 and email example:
 <code>python3 controller.py --file url.txt --query "[YOUR_REGEX_1]@@[YOUR_REGEX_2]" --splitter "@@" --onlyscope --path /var/www/html/ -x 1,2</code>
 </pre>
 
+<h3> Run in background: </h3>
+
+<pre class="notranslate">
+<code><strong>nohup</strong> [YOUR_SEARCH_HERE] <strong>&</strong></code>
+</pre>
+
+
 <h3> Recursive </h3>
 
 
