@@ -93,6 +93,7 @@ def usage():
     print("-p --path\t\tPath where you want save your result (Example: -p /var/www/html)")
     print("-z --template\t\tChoose a template (Example: -t 1,3)")
     print("-l --list\t\tprint a list of available template")
+    print("-x --regex\t\tmarks the location of your RegExpr in the query parameter (Example: -x 1 OR -x 1,3)")
     print("--lookup\t\tlookup a template")
     print("--create\t\tcreate/modify a template")
     print("--delete\t\tdelete a template")
