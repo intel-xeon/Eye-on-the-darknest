@@ -7,7 +7,7 @@ import shutil
 import random
 import ast
 
-#Da implementare il parametro regex nello spider
+#Da implementare il parametro regex nello spidervdbr
 
 def torEnabled():
     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
